@@ -69,5 +69,41 @@ Solution : The observation to be seen here is whichever is the single element, t
 5. Link Solution : [Neetcode Solution](https://www.youtube.com/watch?v=q6IEA26hvXc)
 <pre>class Solution {
 public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> v;
+        if(nums1.size()>nums2.size()){
+            v = nums2;
+            nums2 = nums1;
+            nums1 = v;
+        }
+        
+        int l=0, h=nums1.size()-1;
+        int half = (nums1.size() + nums2.size())/2;
+        int len2 = 0;
+        while(true){
+            int mid = floor((double)(l+h)/2);
+            // Postion of the element in v2 till which its left part extends
+            len2 = half - mid - 2;
+            int l1 = mid >= 0? nums1[mid]:INT_MIN;
+            int l2 = len2 >= 0? nums2[len2]:INT_MIN;
+            int r1 = mid+1 < nums1.size()? nums1[mid+1]:INT_MAX;
+            int r2 = len2+1 < nums2.size()? nums2[len2+1]: INT_MAX;
+            if(max(l1,l2) <= min(r1,r2)){
+                if((nums1.size() + nums2.size())%2 == 0){
+                    return (double)(max(l1,l2) + min(r1,r2)) / 2;
+                } else
+                    return min(r1,r2);
+            } else {
+                if(l1 > r2){
+                    //Need to reduce elements from left-half of 1st array
+                    h=mid-1;
+                } else {
+                    //Need to decrease number of elements from left-half of 2nd array &
+                    // by increasing more from 1st array
+                    l=mid+1;
+                }
+            }
+        }
+    }
 }; </pre>        
 
