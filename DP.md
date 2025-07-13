@@ -57,7 +57,7 @@ In that way the end of the dp cache should give us the maximum we can rob with t
                 nums[i] = max(nums[i], nums[i-1]);
         }
         return nums[nums.size()-1];
-    }
+    } 
 </pre>
 
 **B.House Robber II** This is one is same as the above one with a slight variation and that is the houses are kept in circular position which makes the last and first house as the adjacent neighbours.
@@ -81,7 +81,7 @@ Explanation: The longest common subsequence is "ace" and its length is 3.
 
 Solution : This problem can be analyed in a way that every time a character matches in both strings, we ask give me the LCS from the remaining substring of s1 and s2 and then add 1 to it and if the characters dont match we consider the maximum of LCS of the reminaing substring of (s1 after that character and s2 ) and (s2 after that character and s1). 
 
-<pre>
+<pre> \`\`\`
        {
         vector<vector<int>> dp(text1.length()+1, vector<int>(text2.length()+1, 0));
     
@@ -95,6 +95,6 @@ Solution : This problem can be analyed in a way that every time a character matc
         }
         return dp[text1.length()][text2.length()];
     }
-</pre>
+\`\`\` </pre>
 
 
