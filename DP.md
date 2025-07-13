@@ -18,7 +18,7 @@ or by no including the element. So the Problem becomes O(2^n) complexity.
 The above can be optimized by observibg that there are lot of repeating subproblems and we can memoize that. So if a particular sum value can be achieved by a particular value can be achieved by either inlcluding/excluding that element. 
 Similarly it can be approached using bottom-up approach by maintaining a 2d dp array with rows as numbers in the array and columns as the possible sums from 0 to total_sum/2 ( = target) .
 
-<pre>class Solution {
+class Solution {
 public:
     int target = sum / 2;
         int n = nums.size();
@@ -40,14 +40,14 @@ public:
         }
                        
         return dp[n][target];
-}; </pre>        
+};         
 
 **B.House Robber** Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob by not robbing from adjacent houses. 
 
 Solution : The Logic should be pretty simple by keeping a DP array and at each index representing the maximum that can be robbed till that position of the house (either including or excluding the house). So at each position we check the (i-2)th postition dp value, and add the money value of the current house and compare it with the (i-1)th house dp value and store which one is greater.
 In that way the end of the dp cache should give us the maximum we can rob with the above constraints.
 
-<pre>
+
        int rob(vector<int>& nums) {
 
         for(int i=1; i<nums.size(); i++){
@@ -58,7 +58,7 @@ In that way the end of the dp cache should give us the maximum we can rob with t
         }
         return nums[nums.size()-1];
     } 
-</pre>
+
 
 **B.House Robber II** This is one is same as the above one with a slight variation and that is the houses are kept in circular position which makes the last and first house as the adjacent neighbours.
 
