@@ -42,3 +42,34 @@ public:
         return dp[n][target];
 }; </pre>        
 
+**B.House Robber** Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob by not robbing from adjacent houses. 
+
+Solution : The Logic should be pretty simple by keeping a DP array and at each index representing the maximum that can be robbed till that position of the house (either including or excluding the house). So at each position we check the (i-2)th postition dp value, and add the money value of the current house and compare it with the (i-1)th house dp value and store which one is greater.
+In that way the end of the dp cache should give us the maximum we can rob with the above constraints.
+
+<pre>
+       int rob(vector<int>& nums) {
+
+        for(int i=1; i<nums.size(); i++){
+            if(i-2>=0)
+                nums[i] = max(nums[i] + nums[i-2], nums[i-1]);
+            else
+                nums[i] = max(nums[i], nums[i-1]);
+        }
+        return nums[nums.size()-1];
+    }
+</pre>
+
+**B.House Robber II** This is one is same as the above one with a slight variation and that is the houses are kept in circular position which makes the last and first house as the adjacent neighbours.
+
+Solution : So we notice that since 1st and Last houses are adjacent, we can't have an answer where the 1st and last houses have been robbed. So we break into two separate House Robber I problems, i.e. consider two arrays from [0:n-2] and [1:n-1] , where n is the number of Houses. So in one of the arrays Last house is removed and on another 1st house has been removed, and we just find the solutions for both and return the maximum of both.
+
+**C.Longest Palindromic Substring** 
+Given a string s, return the longest palindromic substring in s.
+
+Solution: This problem can be easily solved if we observe that the condition for an substring [i:j] is palindrome if s[i] == s[j]
+and the substring [i+1:j-1] is a palindrome. 
+So there can be easy recursive solution where we recursively check for [i+1:j-1] is palindrome or not if s[i] == s[j]. The steps can be memoized using dp[i][j] to have optimal solution. 
+Similarly a Bottom Up appraoch can also be conducted.
+
+
