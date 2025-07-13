@@ -82,7 +82,7 @@ Explanation: The longest common subsequence is "ace" and its length is 3.
 Solution : This problem can be analyed in a way that every time a character matches in both strings, we ask give me the LCS from the remaining substring of s1 and s2 and then add 1 to it and if the characters dont match we consider the maximum of LCS of the reminaing substring of (s1 after that character and s2 ) and (s2 after that character and s1). 
 
 <pre>
-       int longestCommonSubsequence(string text1, string text2) {
+       {
         vector<vector<int>> dp(text1.length()+1, vector<int>(text2.length()+1, 0));
     
         for(int i=1; i<text1.length()+1; i++){
