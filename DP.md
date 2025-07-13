@@ -11,34 +11,34 @@ Input: nums = [1,2,3,5]
 Output: false
 Explanation: The array cannot be partitioned into equal sum subsets.
 
-Solution : The observation to be seen here is whichever is the single element, that partitions the array in to two parts : left and right. 
-           All the elements in left part are such that the First element is at even index and its corresponding other one is at odd. And vice versa in Right half.
-           So every time we can apply binary search with the following appraoch :
+Solution : The Best way to approach this is to observe that the problem can be reduced to check if a subsequence sum can be equal to (Array_sum / 2)
+So the brute force approach will be to traverse the whole array and check for each one if the target sum can be achieved by including the element
+or by no including the element. So the Problem becomes O(2^n) complexity.
 
-1. Initialize two pointers, left and right, to the first and last indices of the input array, respectively.
-2. While the left pointer is less than the right pointer:
-    a. Compute the index of the middle element by adding left and right and dividing by 2.
-    b. If the index of the middle element is odd, subtract 1 to make it even.
-    c. Compare the middle element with its adjacent element on the right:
-       i. If the middle element is not equal to its right neighbor, the single element must be on the left side of the array, so update the right pointer to be the current middle index.
-       ii. Otherwise, the single element must be on the right side of the array, so update the left pointer to be the middle index plus 2.
-3. When the left and right pointers converge to a single element, return that element.
+The above can be optimized by observibg that there are lot of repeating subproblems and we can memoize that. So if a particular sum value can be achieved by a particular value can be achieved by either inlcluding/excluding that element. 
+Similarly it can be approached using bottom-up approach by maintaining a 2d dp array with rows as numbers in the array and columns as the possible sums from 0 to total_sum/2 ( = target) .
+
 <pre>class Solution {
 public:
-    int singleNonDuplicate(vector<int>& nums) {
-        int left = 0, right = nums.size() - 1;
-        while (left < right) {
-            int mid = (left + right) / 2;
-            if (mid % 2 == 1) {
-                mid--;
-            }
-            if (nums[mid] != nums[mid + 1]) {
-                right = mid;
-            } else {
-                left = mid + 2;
+    int target = sum / 2;
+        int n = nums.size();
+        vector<vector<bool>> dp(n + 1, vector<bool>(target + 1, false));
+        
+        for (int i = 0; i <= n; i++) {
+            dp[i][0] = true; 
+        }
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= target; j++) {
+                if (nums[i - 1] <= j) {
+                    dp[i][j] = dp[i - 1][j] || 
+                               dp[i - 1][j - nums[i - 1]];
+                } else {
+                    dp[i][j] = dp[i - 1][j];
+                }
             }
         }
-        return nums[left];
-    }
+                       
+        return dp[n][target];
 }; </pre>        
 
