@@ -91,4 +91,67 @@ Solution : This problem can be analyed in a way that every time a character matc
         }
         return dp[text1.length()][text2.length()];
 
+**D.Unique Paths**
+There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]). The robot can only move either down or right at any point in time.
+Return the number of possible unique paths that the robot can take to reach the bottom-right corner.
+
+To approcah this problem we all have to traverse the grid and for each cell position we need to make count in how many possible ways can we reach the destination if start from that particular cell. So we just need to need to recursive call for dp[x+1[y] and dp[x][y+1] i.e one cell below and one cell to right and we add those values to get possible values for current cell.
+
+Memoized Approach :
+
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n, -1));
+        return totalUniquePaths(0, 0, m, n, dp);
+    }
+
+    int totalUniquePaths(int x, int y, int &m, int &n, vector<vector<int>> &dp){
+        if(x == m-1 && y == n-1)
+            return 1;
+        if(x >= m || y>= n)
+            return 0;
+        
+        if(x+1 < m && dp[x+1][y] != -1)
+            dp[x][y] = dp[x+1][y];
+        else
+            dp[x][y] = totalUniquePaths(x+1, y, m, n, dp);
+        
+        if(y+1 < n && dp[x][y+1] != -1)
+            dp[x][y] += dp[x][y+1];
+        else
+            dp[x][y] += totalUniquePaths(x, y+1, m, n, dp);
+
+        return dp[x][y];
+    }
+};
+
+Top-Down Approcah :
+Writing this approach because while Bottom-Up appraoch/ Table method can be aimplemented in the above case also, there one more way to solve the problem in reverse direction. Instead of calculating how many possible ways are to reach the bottom-right bu starting at a particualr cell, we can instead think of calculating as how many ways can I reach that particular cell if I start from top left corner. So in this way it becomes easy to implement using table method. We just need to add dp[i-1][j] and dp[i][j-1].
+
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n, 0));
+        for(int i=0; i<m; i++)
+            dp[i][0] = 1;
+        for(int j=0; j<n; j++)
+            dp[0][j] = 1;
+        
+        for(int i=1; i<m; i++){
+            for(int j=1; j<n; j++){
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
+        }
+
+        for(int i=0; i<m; i++){
+            for(int j=0; j<n; j++){
+                cout<<dp[i][j]<<" ";
+            }
+            cout<<endl;
+        }
+
+        return dp[m-1][n-1];
+    }
+};
 
