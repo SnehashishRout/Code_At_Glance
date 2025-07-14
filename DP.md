@@ -150,4 +150,44 @@ Writing this approach because while Bottom-Up appraoch/ Table method can be aimp
         return dp[m-1][n-1];
     }
 
+**D.Best Time to Buy and Sell Stock with Cooldown**
+You are given an array prices where prices[i] is the price of a given stock on the ith day.
+Find the maximum profit you can achieve. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times) with the following restrictions:
+After you sell your stock, you cannot buy stock on the next day (i.e., cooldown one day).
+Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again).
 
+Input: prices = [1,2,3,0,2]
+Output: 3
+Explanation: transactions = [buy, sell, cooldown, buy, sell]
+
+Input: prices = [1]
+Output: 0
+
+Solution : This problem can be thought of as for each price, we have two choices either we buy/sell or skip for that day. Buy or sell can be applied to all the prices but it is conditional. We can buy a stock only if we have sold the previous stock and we are not holding any stock, and similarly we can sell a stock only if we have bought a stock already and holding it. So it is situation dependent. So when we construct the solution we can see the solution tree branches out in binary tree and thus we have 2 options for every price, either buy/sell or skip. Thus we can memoize it since we have a lot of repeating subproblems and dont have to recurse for a situation that is already there.
+
+    int maxProfit(vector<int>& prices) {
+        vector<vector<int>> dp(prices.size(), vector<int>(2, -1));
+        return maxProf(prices, 0, 1, dp);
+    }
+
+    int maxProf(vector<int>& prices, int ind, int isBuy, vector<vector<int>> &dp) {
+        if(ind >= prices.size()) {
+            return 0;
+        }
+
+        if(dp[ind][isBuy] != -1)
+            return dp[ind][isBuy];
+
+        int max_from_buy = 0, max_from_sell = 0, max_from_skip = 0;
+
+        if(isBuy) {
+            max_from_buy = maxProf(prices, ind+1, false, dp) - prices[ind];
+            max_from_skip = maxProf(prices, ind+1, isBuy, dp);
+            dp[ind][isBuy] = max(max_from_buy, max_from_skip);
+        } else {
+            max_from_sell = maxProf(prices, ind+2, true, dp) + prices[ind];
+            max_from_skip = maxProf(prices, ind+1, isBuy, dp);
+            dp[ind][isBuy] = max(max_from_sell, max_from_skip);
+        }
+        return dp[ind][isBuy];
+    }
