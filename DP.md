@@ -191,3 +191,63 @@ Solution : This problem can be thought of as for each price, we have two choices
         }
         return dp[ind][isBuy];
     }
+
+**D.Coin Change**
+You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
+Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
+You may assume that you have an infinite number of each kind of coin.
+
+Input: coins = [1,2,5], amount = 11
+Output: 3
+Explanation: 11 = 5 + 5 + 1
+
+**D.Coin Change II**
+You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
+Return the number of combinations that make up that amount. If that amount of money cannot be made up by any combination of the coins, return 0.
+You may assume that you have an infinite number of each kind of coin.
+
+Input: amount = 5, coins = [1,2,5]
+Output: 4
+Explanation: there are four ways to make up the amount:
+5=5
+5=2+2+1
+5=2+1+1+1
+5=1+1+1+1+1
+
+Solution : This problem can be thought of as for each coin we have two choices either to include that coin or not include. So the total number of ways of forming an amount if the array starts from that coin, is addition of no. of ways by including  and  no. of ways by not-including that coin. But we have to remember that if we are including that coin, we should not just move to the next coin but rather stay at the same one because it is mentioned we can have as many number of a particular coin as possible. So after memoizing the sub problems we get the below : 
+
+    int change(int amount, vector<int>& coins) {
+        vector<vector<int>> dp(coins.size(), vector<int>(amount+1, -1));
+        return dfs(amount, coins, 0, dp);
+    }
+
+    int dfs(int amount, vector<int>& coins, int i, vector<vector<int>> &dp){
+        if(amount == 0)
+            return 1;
+        if(amount < 0 || i == coins.size())
+            return 0;
+        
+        if(dp[i][amount] != -1)
+            return dp[i][amount];
+        
+        return dp[i][amount] = dfs(amount, coins, i+1, dp) + dfs(amount - coins[i], coins, i, dp);
+    }
+
+Similarly the Tabular approach can be as follows : 
+
+   int change(int amount, vector<int>& coins) {
+        vector<vector<int>> dp(coins.size()+1, vector<int>(amount+1, 1));
+        int res = 0;
+        for(int j=1; j<=amount; j++)
+            dp[0][j] = 0;
+
+        for(int i=1; i<=coins.size(); i++){
+            for(int j=1; j<=amount; j++){
+                if(j - coins[i-1] >= 0){
+                    dp[i][j] = dp[i-1][j] + dp[i][j - coins[i-1]];
+                } else
+                    dp[i][j] = dp[i-1][j];
+            }
+        }
+        return dp[coins.size()][amount];
+    }
