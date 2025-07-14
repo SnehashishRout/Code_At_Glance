@@ -235,7 +235,8 @@ Solution : This problem can be thought of as for each coin we have two choices e
 
 Similarly the Tabular approach can be as follows : 
 
-   int change(int amount, vector<int>& coins) {
+
+       int change(int amount, vector<int>& coins) {
         vector<vector<int>> dp(coins.size()+1, vector<int>(amount+1, 1));
         int res = 0;
         for(int j=1; j<=amount; j++)
