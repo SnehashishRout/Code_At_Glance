@@ -99,8 +99,6 @@ To approcah this problem we all have to traverse the grid and for each cell posi
 
 Memoized Approach :
 
-class Solution {
-public:
     int uniquePaths(int m, int n) {
         vector<vector<int>> dp(m, vector<int>(n, -1));
         return totalUniquePaths(0, 0, m, n, dp);
@@ -124,13 +122,11 @@ public:
 
         return dp[x][y];
     }
-};
 
 Top-Down Approcah :
 Writing this approach because while Bottom-Up appraoch/ Table method can be aimplemented in the above case also, there one more way to solve the problem in reverse direction. Instead of calculating how many possible ways are to reach the bottom-right bu starting at a particualr cell, we can instead think of calculating as how many ways can I reach that particular cell if I start from top left corner. So in this way it becomes easy to implement using table method. We just need to add dp[i-1][j] and dp[i][j-1].
 
-class Solution {
-public:
+
     int uniquePaths(int m, int n) {
         vector<vector<int>> dp(m, vector<int>(n, 0));
         for(int i=0; i<m; i++)
@@ -153,5 +149,5 @@ public:
 
         return dp[m-1][n-1];
     }
-};
+
 
