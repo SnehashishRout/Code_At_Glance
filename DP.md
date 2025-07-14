@@ -202,8 +202,8 @@ Output: 3
 Explanation: 11 = 5 + 5 + 1
 
 Solution : You can think of it as every coin has 2 choices either to included or not, and if it is to be included or not included. So at every stage your answer is sum of the least number of coins to be used to form the remaining amount + least no. of coins for the same amt. for the rest of the pile. 
-
-  int coinChange(vector<int>& coins, int amount) {
+<pre>
+       int coinChange(vector<int>& coins, int amount) {
         vector<int> dp(amount+1, amount+1);
         dp[0] = 0;
         for(int i=1; i<=amount; i++){
@@ -215,7 +215,8 @@ Solution : You can think of it as every coin has 2 choices either to included or
         }
         return dp[amount] != amount+1 ? dp[amount] : -1;
     }
-
+</pre>
+  
 **D.Coin Change II**
 You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
 Return the number of combinations that make up that amount. If that amount of money cannot be made up by any combination of the coins, return 0.
