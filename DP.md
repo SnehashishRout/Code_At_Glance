@@ -292,7 +292,7 @@ Solution : A simple approach to the solution can be thought of as we traverse ev
         return res;
     }
 
-## **Longest Increasing Subsequence**
+**Longest Increasing Subsequence**
 
 Given an integer array `nums`, return the length of the longest strictly increasing subsequence.
 
@@ -307,7 +307,7 @@ The longest increasing subsequence is `[2,3,7,101]`, therefore the length is 4.
 
 ---
 
-### **Solution**  
+**Solution**  
 A simple approach to the solution can be thought of as: we traverse every element in the array, and for every element we try to compute what would be the **Longest Increasing Subsequence** if that were the starting element of the sequence. For that, we traverse every element to the right that is in increasing sequence. We keep track of the longest length we achieve so far.
 
 ```cpp
