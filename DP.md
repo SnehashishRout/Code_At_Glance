@@ -278,9 +278,7 @@ Explanation: The longest increasing subsequence is [2,3,7,101], therefore the le
 
 Solution : A simple approach to the solution can be thought of as we traverse every element in the array and for every element we try to compute what would be the Longest Increasing Subsequence if that were the starting element of the sequence. And for that we traverse for every element in the rest of the array in the right and that is in increasing sequence. And we keep on keeping a check on the longest we achieve so far.
 
-class Solution {
-public:
-    int lengthOfLIS(vector<int>& nums) {
+int lengthOfLIS(vector<int>& nums) {
         vector<int> dp(nums.size(), 1);
         dp[nums.size()-1] = 1;
         int res = 1;
@@ -293,5 +291,4 @@ public:
         }
         return res;
     }
-}
                                    
