@@ -270,39 +270,16 @@ Similarly the Tabular approach can be as follows :
     }
 
 **Longest Increasing Subsequence**
-Given an integer array nums, return the length of the longest strictly increasing subsequence.
-
-Input: nums = [10,9,2,5,3,7,101,18]
-Output: 4
-Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
-
-Solution : A simple approach to the solution can be thought of as we traverse every element in the array and for every element we try to compute what would be the Longest Increasing Subsequence if that were the starting element of the sequence. And for that we traverse for every element in the rest of the array in the right and that is in increasing sequence. And we keep on keeping a check on the longest we achieve so far.
-
- int lengthOfLIS(vector<int>& nums) {
-        vector<int> dp(nums.size(), 1);
-        dp[nums.size()-1] = 1;
-        int res = 1;
-        for(int i=nums.size()-2; i>=0; i--){
-            for(int j=i+1; j<nums.size(); j++){
-                if(nums[i] < nums[j])
-                    dp[i] = max(dp[i], 1 + dp[j]);
-            }
-            res = max(res,dp[i]);
-        }
-        return res;
-    }
-
-**Longest Increasing Subsequence**
 
 Given an integer array `nums`, return the length of the longest strictly increasing subsequence.
 
-**Input:**  
+Input:
 `nums = [10,9,2,5,3,7,101,18]`
 
-**Output:**  
+Output:
 `4`
 
-**Explanation:**  
+Explanation:
 The longest increasing subsequence is `[2,3,7,101]`, therefore the length is 4.
 
 ---
@@ -326,5 +303,26 @@ int lengthOfLIS(vector<int>& nums) {
 
     return res;
 }
+```
 
+**Interleaving Strings**
+Given strings s1, s2, and s3, find whether s3 is formed by an interleaving of s1 and s2.
+
+Input: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
+
+Output: true
+
+Explanation: One way to obtain s3 is:
+Split s1 into s1 = "aa" + "bc" + "c", and s2 into s2 = "dbbc" + "a".
+Interleaving the two splits, we get "aa" + "dbbc" + "bc" + "a" + "c" = "aadbbcbcac".
+Since s3 can be obtained by interleaving s1 and s2, we return true.
                                    
+Input: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbbaccc"
+
+Output: false
+
+Explanation: Notice how it is impossible to interleave s2 with any other string to obtain s3.
+
+Input: s1 = "", s2 = "", s3 = ""
+Output: true
+
