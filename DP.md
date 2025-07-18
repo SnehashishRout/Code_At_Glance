@@ -269,7 +269,7 @@ Similarly the Tabular approach can be as follows :
         return dp[coins.size()][amount];
     }
 
-**Longest Increasing Subsrquence**
+**Longest Increasing Subsequence**
 Given an integer array nums, return the length of the longest strictly increasing subsequence.
 
 Input: nums = [10,9,2,5,3,7,101,18]
@@ -278,7 +278,6 @@ Explanation: The longest increasing subsequence is [2,3,7,101], therefore the le
 
 Solution : A simple approach to the solution can be thought of as we traverse every element in the array and for every element we try to compute what would be the Longest Increasing Subsequence if that were the starting element of the sequence. And for that we traverse for every element in the rest of the array in the right and that is in increasing sequence. And we keep on keeping a check on the longest we achieve so far.
 
-<pre>
 class Solution {
 public:
     int lengthOfLIS(vector<int>& nums) {
@@ -295,5 +294,4 @@ public:
         return res;
     }
 }
-</pre>
                                    
