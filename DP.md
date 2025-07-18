@@ -291,4 +291,40 @@ Solution : A simple approach to the solution can be thought of as we traverse ev
         }
         return res;
     }
+
+## **Longest Increasing Subsequence**
+
+Given an integer array `nums`, return the length of the longest strictly increasing subsequence.
+
+**Input:**  
+`nums = [10,9,2,5,3,7,101,18]`
+
+**Output:**  
+`4`
+
+**Explanation:**  
+The longest increasing subsequence is `[2,3,7,101]`, therefore the length is 4.
+
+---
+
+### **Solution**  
+A simple approach to the solution can be thought of as: we traverse every element in the array, and for every element we try to compute what would be the **Longest Increasing Subsequence** if that were the starting element of the sequence. For that, we traverse every element to the right that is in increasing sequence. We keep track of the longest length we achieve so far.
+
+```cpp
+int lengthOfLIS(vector<int>& nums) {
+    vector<int> dp(nums.size(), 1);
+    dp[nums.size() - 1] = 1;
+    int res = 1;
+
+    for (int i = nums.size() - 2; i >= 0; i--) {
+        for (int j = i + 1; j < nums.size(); j++) {
+            if (nums[i] < nums[j])
+                dp[i] = max(dp[i], 1 + dp[j]);
+        }
+        res = max(res, dp[i]);
+    }
+
+    return res;
+}
+
                                    
