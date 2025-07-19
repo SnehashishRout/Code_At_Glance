@@ -150,7 +150,7 @@ Writing this approach because while Bottom-Up appraoch/ Table method can be aimp
         return dp[m-1][n-1];
     }
 
-**D.Best Time to Buy and Sell Stock with Cooldown**
+**E.Best Time to Buy and Sell Stock with Cooldown**
 You are given an array prices where prices[i] is the price of a given stock on the ith day.
 Find the maximum profit you can achieve. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times) with the following restrictions:
 After you sell your stock, you cannot buy stock on the next day (i.e., cooldown one day).
@@ -192,7 +192,7 @@ Solution : This problem can be thought of as for each price, we have two choices
         return dp[ind][isBuy];
     }
 
-**D.Coin Change**
+**F.Coin Change**
 You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
 Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
 You may assume that you have an infinite number of each kind of coin.
@@ -217,7 +217,7 @@ Solution : You can think of it as every coin has 2 choices either to included or
     }
 </pre>
   
-**D.Coin Change II**
+**G.Coin Change II**
 You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
 Return the number of combinations that make up that amount. If that amount of money cannot be made up by any combination of the coins, return 0.
 You may assume that you have an infinite number of each kind of coin.
@@ -269,7 +269,7 @@ Similarly the Tabular approach can be as follows :
         return dp[coins.size()][amount];
     }
 
-**Longest Increasing Subsequence**
+**H.Longest Increasing Subsequence**
 
 Given an integer array `nums`, return the length of the longest strictly increasing subsequence.
 
@@ -305,7 +305,7 @@ int lengthOfLIS(vector<int>& nums) {
 }
 ```
 
-**Interleaving Strings**
+**I.Interleaving Strings**
 Given strings s1, s2, and s3, find whether s3 is formed by an interleaving of s1 and s2.
 
 Input: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
@@ -325,4 +325,88 @@ Explanation: Notice how it is impossible to interleave s2 with any other string 
 
 Input: s1 = "", s2 = "", s3 = ""
 Output: true
+
+**J.Distinct Subsequences**
+Given two strings s and t, return the number of distinct subsequences of s which equals t.
+
+Input: s = "rabbbit", t = "rabbit"  
+Output: 3 <br>
+Explanation: <br>
+As shown below, there are 3 ways you can generate "rabbit" from s.<br>
+rabbbit<br>
+rabbbit<br>
+rabbbit<br>
+
+Input: s = "babgbag", t = "bag" <br>
+Output: 5 <br>
+Explanation: <br>
+As shown below, there are 5 ways you can generate "bag" from s. <br>
+babgbag <br>
+babgbag <br>
+babgbag <br>
+babgbag <br>
+babgbag <br>
+
+Solution : We can first think of brute force approach and that is we maintain two pointers i and j for s and t respectively and traverse through s and for each index we ask what is the total subsequence possible if we start at that index of s. So we check if char at s[i] == t[j] , and if they are we can include that char of s to form a possible subsequence equal to t and thus check for rest of the subsequences that can be formed by incrementing i+1 and j+1. After recursively finding the number of subsequences of s possible which is same as t, we can then check for number of subsequences possible if we skip that char, so we just increment i = i+1 and let j remain the same. So we have incl and excl which are no. of subsequences possibles by including that character and excluding that character.
+We keep on doing the same for all the characters of s and finally return the i=0,j=0 wala case.
+
+Memoization Recursive Approach : 
+
+```cpp
+class Solution {
+public:
+    int numDistinct(string s, string t) {
+        if(s.length() < t.length())
+            return 0;
+        int res = 0;
+        vector<vector<int>> dp(s.length(), vector<int>(t.length(), -1));
+        for(int i=0; i<s.length(); i++) {
+            res = max(res, dfs(s, t, i, 0, dp));
+        }
+        return res;
+    }
+
+    int dfs(string s, string t, int i, int j, vector<vector<int>> &dp){
+        if(j == t.length())
+            return 1;
+        if(i == s.length())
+            return 0;
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        int incl = 0, excl = 0;
+        if(s[i] == t[j])
+            incl = dfs(s, t, i+1, j+1, dp);
+        excl = dfs(s, t, i+1, j, dp);
+        dp[i][j] = incl + excl;
+        return incl + excl;
+    }
+};
+```
+Tabular DP Method :
+In Tabular Method we just reverse our logic and instead of start we look at each index as the ending one. So for a cell dp[i][j] denotes the number of occurrences of t[0:j] in subsequences of s[0:i]. So for each element, if s[i] == t[j] , we can include that character of s in subsequence thus dp[i][j] = dp[i-1][j-1] + dp[i-1][j] where dp[i-1][j-1] denotes the number of subsequences if s[i] is included bcz it all depends on how many subsequences we have of the previous portion of s and t and dp[i-1][j] is the exclusion count, that is how many subsequences we have of t[0:j] in s[0:i-1].
+We also need to understand the base case, that is the first row and first column which will be blank char for both strings. So coulmn would be filled with 1 bcz we can always have one subsquence in s that matches "" (blank) in t. The rest of cells in 1st row will be 0 bcz we cannot have a subsequence in a blank string that matches a character or substring from t. 
+```cpp
+class Solution {
+public:
+    int numDistinct(string s, string t) {
+        if(s.length() < t.length())
+            return 0;
+        vector<vector<double>> dp(s.length()+1, vector<double>(t.length()+1, -1));
+        for(int j=0; j<t.length()+1; j++)
+            dp[0][j] = 0;
+        for(int i=0; i<s.length()+1; i++)
+            dp[i][0] = 1;
+        for(int i=1; i<s.length()+1; i++) {
+            for(int j=1; j<t.length()+1; j++){
+                if(s[i-1] == t[j-1])
+                    dp[i][j] = dp[i-1][j-1] + dp[i-1][j];
+                else
+                    dp[i][j] = dp[i-1][j];
+            }
+        }
+        return dp[s.length()][t.length()];
+    }
+};
+```
 
