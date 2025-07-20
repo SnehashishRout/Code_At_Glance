@@ -608,3 +608,48 @@ public:
         return res;
     }
 ```
+
+**Longest Increasing Path in a Matrix**  
+Given an m x n integers matrix, return the length of the longest increasing path in matrix.
+
+From each cell, you can either move in four directions: left, right, up, or down. You may not move diagonally or move outside the boundary (i.e., wrap-around is not allowed).
+
+For Input and output test cases : [Leetcode](https://leetcode.com/problems/longest-increasing-path-in-a-matrix/description/)
+
+Solution :  
+This can be approached simply by traversing each cell and checking what would be longest Increasing path if we start from that particualar cell. The subproblems can be memoized accordingly and can be optimized.
+
+```cpp
+class Solution {
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int res = 0;
+        vector<vector<int>> dp (matrix.size(), vector<int>(matrix[0].size(), -1));
+        for(int i=0; i<matrix.size(); i++) {
+            for(int j=0; j<matrix[0].size(); j++) {
+                res = max(res, dfs(matrix, i, j, dp));
+            }
+        }
+        return res;
+    }
+
+    int dfs(vector<vector<int>>& matrix, int x, int y, vector<vector<int>> &dp) {
+        if(x >= matrix.size() || y >= matrix[0].size())
+            return 0;
+        if(dp[x][y] != -1)
+            return dp[x][y];
+        int res_down = 1, res_up = 1, res_right = 1, res_left = 1;
+        if(x+1 < matrix.size() && matrix[x][y] < matrix[x+1][y])
+            res_down = dfs(matrix, x+1, y, dp) + 1;
+        if(x-1 >= 0 && matrix[x][y] < matrix[x-1][y])
+            res_up = dfs(matrix, x-1, y, dp) + 1;
+        if(y+1 < matrix[0].size() && matrix[x][y] < matrix[x][y+1])
+            res_right = dfs(matrix, x, y+1, dp) + 1;
+        if(y-1 >= 0 && matrix[x][y] < matrix[x][y-1])
+            res_left = dfs(matrix, x, y-1, dp) + 1;
+        
+        dp[x][y] = max(res_up, max(res_down, max(res_left, res_right)));
+        return dp[x][y];
+    }
+};
+```
