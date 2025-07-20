@@ -17,7 +17,7 @@ or by no including the element. So the Problem becomes O(2^n) complexity.
 
 The above can be optimized by observibg that there are lot of repeating subproblems and we can memoize that. So if a particular sum value can be achieved by a particular value can be achieved by either inlcluding/excluding that element. 
 Similarly it can be approached using bottom-up approach by maintaining a 2d dp array with rows as numbers in the array and columns as the possible sums from 0 to total_sum/2 ( = target) .
-
+```cpp
 class Solution {
 public:
     int target = sum / 2;
@@ -41,7 +41,7 @@ public:
                        
         return dp[n][target];
 };         
-
+```
 **B.House Robber** Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob by not robbing from adjacent houses. 
 
 Solution : The Logic should be pretty simple by keeping a DP array and at each index representing the maximum that can be robbed till that position of the house (either including or excluding the house). So at each position we check the (i-2)th postition dp value, and add the money value of the current house and compare it with the (i-1)th house dp value and store which one is greater.
@@ -71,6 +71,46 @@ Solution: This problem can be easily solved if we observe that the condition for
 and the substring [i+1:j-1] is a palindrome. 
 So there can be easy recursive solution where we recursively check for [i+1:j-1] is palindrome or not if s[i] == s[j]. The steps can be memoized using dp[i][j] to have optimal solution. 
 Similarly a Bottom Up appraoch can also be conducted.
+
+```cpp
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        vector<vector<bool>> dp(s.length(), vector<bool>(s.length(), false));
+
+        int res = 0, start = 0, end = 0;
+        for(int i=0; i<s.length(); i++){
+            for(int j=0; j<s.length(); j++){
+                if(i==j)
+                    dp[i][j] = true;
+                if(j-i == 1){
+                    if(s[i] == s[j])
+                        dp[i][j] = true;
+                }
+                if(dp[i][j] && res < j-i+1){
+                    res = j-i+1;
+                    start = i; end = j;
+                }
+            }
+        }
+
+        int i=s.length()-1;
+        while(i>=0){
+            for(int j=i+2; j<s.length(); j++) {
+                if(s[i] == s[j]){
+                    dp[i][j] = dp[i+1][j-1];
+                }
+                if(dp[i][j] && res < j-i+1){
+                    res = j-i+1;
+                    start = i; end = j;
+                }
+            }
+            i--;
+        }
+        return s.substr(start, res);
+    }
+};
+```
 
 **D.Longest Common Subsequence**
 Given two strings text1 and text2, return the length of their longest common subsequence. If there is no common subsequence, return 0.
