@@ -410,3 +410,68 @@ public:
 };
 ```
 
+**Regex Matching**
+Given an input string s and a pattern p, implement regular expression matching with support for '.' and '*' where:
+
+'.' Matches any single character.​​​​
+'*' Matches zero or more of the preceding element.
+The matching should cover the entire input string (not partial).
+
+Example 1:<br>
+
+Input: s = "aa", p = "a"<br>
+Output: false<br>
+Explanation: "a" does not match the entire string "aa".<br>
+Example 2:<br>
+
+Input: s = "aa", p = "a*"<br>
+Output: true<br>
+Explanation: '*' means zero or more of the preceding element, 'a'. Therefore, by repeating 'a' once, it becomes "aa".<br>
+Example 3:<br>
+
+Input: s = "ab", p = ".*"<br>
+Output: true<br>
+Explanation: ".*" means "zero or more (*) of any character (.)".<br>
+
+Solution : <br>
+This question is simple string matching and only thing that makes it complex is the * . We need to handle this case carefully. We will have to keep two pointers for s and p and move the pointers as we match. For s[i] to be equal to p[j], p[j] has to be either the same character as s[i] or p[j] has to be a '.' Till that part its simple and we jiust need to check for *. So we will check if the next character is * and if it is and the current character p[j] matches s[i] then we can keep j as it is and increment i, because we wanna see if we can match the next s[i+1] too with present character. We can also check a case where we remove the present p[j] with * and thus we move j+2 and keep i as it is, so basically saying start matching from the character in p after *. If any of the cases evaluate to true, we can say we can match the patterns.
+
+We need to carefully understand the base cases too. Here our pattern is said to have fully matched only when i and j , both go out of bounds. If only j goes out of bounds that means, there are still some charcaters in s that is left unmatched so we return false. If only i goes out of bounds, we can't say if the pattern can be matched or not. Bcz think of a scenario where we have a and ab* and in this case i goes out of bounds after first match but j is still not, but we can see in future if is j is allowed to traverse we can potentially have matched pattern bcz there * .
+
+So easiest way is to have memoized version fo it :
+
+```cpp
+public:
+    bool isMatch(string s, string p) {
+        vector<vector<int>> dp(s.length(), vector<int>(p.length(), -1));
+        return dfs(s, p, 0, 0, dp);
+    }
+
+    bool dfs(string s, string t, int i, int j, vector<vector<int>> &dp) {
+        if(i >= s.length() && j >= t.length())
+            return true;
+        if(j >= t.length())
+            return false;
+        
+        if(i < s.length() && dp[i][j] != -1)
+            return dp[i][j];
+
+        bool res = false;
+
+        if(i<s.length() && (s[i] == t[j] || t[j] == '.')){
+            res = dfs(s, t, i+1, j+1, dp);
+        }
+
+        if(j+1 < t.length() && t[j+1] == '*') {
+            if(i<s.length()) {
+                if((s[i] == t[j] || t[j] == '.'))
+                    res = res || dfs(s, t, i+1, j, dp);
+            }
+            res = res || dfs(s, t, i, j+2, dp);
+        }
+
+        if(i < s.length()) 
+            dp[i][j] = res;
+        return res;
+    }
+```
