@@ -326,6 +326,35 @@ Explanation: Notice how it is impossible to interleave s2 with any other string 
 Input: s1 = "", s2 = "", s3 = ""
 Output: true
 
+Solution : <br>
+Here we can think of the problem as we have to form a s3 by including charcaters from s1 and s2 and maintaining the order. So for each character in s3 we have two options either to that character from s1 or s2 and see if in any case it is possible to form s3. So we just keep traversing s3. We can see we dont need a pointer on s3 bcz index at s3 can be computed by adding i + j. So we just need to check if the current character of s3[i+j] is equal to s1[i] or s2[j] and thus include increment i or j correspondingly.
+
+Momoized Code :
+
+```cpp
+public:
+    bool isInterleave(string s1, string s2, string s3) {
+        if(s1.length() + s2.length() != s3.length())
+            return false;
+        vector<vector<int>> dp(s1.length() + 1, vector<int>(s2.length() + 1, -1));
+        return isInterleave(s1, s2, s3, 0, 0, dp);
+    }
+
+    bool isInterleave(string s1, string s2, string s3, int i, int j, vector<vector<int>> &dp){
+        if(i >= s1.length() && j >= s2.length())
+            return true;
+        if(i < s1.length() && j < s2.length() && dp[i][j] != -1)
+            return dp[i][j];
+        bool incl_right = false, incl_left = false;
+        if(i < s1.length() && s1[i] == s3[i+j])
+            incl_left = isInterleave(s1, s2, s3, i+1, j, dp);
+        if(j < s2.length() && s2[j] == s3[i+j])
+            incl_right = isInterleave(s1, s2, s3, i, j+1, dp);
+        dp[i][j] = incl_left || incl_right;
+        return incl_left || incl_right;
+    }
+```
+
 **J.Distinct Subsequences**
 Given two strings s and t, return the number of distinct subsequences of s which equals t.
 
@@ -406,6 +435,110 @@ public:
             }
         }
         return dp[s.length()][t.length()];
+    }
+};
+```
+
+**Edit Distance** <br>
+Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2.
+
+You have the following three operations permitted on a word:
+
+Insert a character
+Delete a character
+Replace a character
+
+Example 1: <br>
+
+Input: word1 = "horse", word2 = "ros" <br>
+Output: 3 <br>
+Explanation: <br>
+horse -> rorse (replace 'h' with 'r') <br>
+rorse -> rose (remove 'r') <br>
+rose -> ros (remove 'e') <br>
+Example 2: <br>
+
+Input: word1 = "intention", word2 = "execution" <br>
+Output: 5 <br>
+Explanation: <br>
+intention -> inention (remove 't') <br>
+inention -> enention (replace 'i' with 'e') <br>
+enention -> exention (replace 'n' with 'x') <br>
+exention -> exection (replace 'n' with 'c') <br>
+exection -> execution (insert 'u') <br>
+
+Solution : So as u can see for each character in w1 , we have three choices, either to Insert new one and shift the present to next index or Delete the character or Replace the character. So we just need to know how we move our pointers in each case.
+So if you are deleting w1[i] , so we just move i by 1 and let j stay the same as we havent matched for w2[j]. If we are replacing the character then we move both i and j as w2[j] has been matched with w1[i] by replacing. For insert, we move only j by 1 i.e j+1 and not i, bcz w2[j] has been matched with the inserted element in w1 and now w2[j+1] has to be taken care with the current element w1[i]. 
+
+And one more case is when two w1[i] == w2[j] and in this case we dont have to do any thing and just move both pointers.
+
+Memoized Code :
+```cpp
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        vector<vector<int>> dp(word1.size(), vector<int>(word2.size(), -1));
+        return dfs(word1, word2, 0, 0, dp);
+    }
+
+    int dfs(string w1, string w2, int i, int j, vector<vector<int>> &dp) {
+        // When all the characters of w2 matched so need to delete rest of unmatched w1
+        if(i >= w1.length() && j < w2.length())
+            return w2.length() - j;
+        // When all the characters of w1 matched so need to insert at the end rest of unmatched characters if w2
+        if(i < w1.length() && j >= w2.length())
+            return w1.length() - i;
+        // When all characters are matched 
+        if(i >= w1.length() && j >= w2.length())
+            return 0;
+        
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        int res = INT_MAX;
+
+        //Case when u just want to skip without any operations
+        if(w1[i] == w2[j])
+            res = min(res, dfs(w1, w2, i+1, j+1, dp));
+        
+        // Insert
+        res = min(res, dfs(w1, w2, i, j+1, dp) + 1);
+        // Delete
+        res = min(res, dfs(w1, w2, i+1, j, dp) + 1);
+        // Replace
+        res = min(res, dfs(w1, w2, i+1, j+1, dp) + 1);
+        dp[i][j] = res;
+        return res;
+    }
+};
+```
+Tabular Method :
+
+```cpp
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        vector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1, INT_MAX));
+        for(int i=0; i<word1.size(); i++){
+            dp[i][word2.length()] = word1.length() - i;
+        }
+
+        for(int j=0; j<word2.size(); j++){
+            dp[word1.length()][j] = word2.length() - j;
+        }
+
+        dp[word1.size()][word2.size()] = 0;
+
+        for(int i=word1.size()-1; i>=0; i--) {
+            for(int j=word2.size()-1; j>=0; j--) {
+                if(word1[i] == word2[j])
+                    dp[i][j] = dp[i+1][j+1];
+                dp[i][j] = min(dp[i][j], dp[i+1][j] + 1);
+                dp[i][j] = min(dp[i][j], dp[i][j+1] + 1);
+                dp[i][j] = min(dp[i][j], dp[i+1][j+1] + 1);
+            }
+        }
+        return dp[0][0];
     }
 };
 ```
