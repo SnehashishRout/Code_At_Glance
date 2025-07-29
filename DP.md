@@ -743,3 +743,47 @@ public:
     }
 };
 ```
+
+**2. Minimum Cost to Cut Stick**
+Given a wooden stick of length n units. The stick is labelled from 0 to n.
+Given an integer array cuts where cuts[i] denotes a position you should perform a cut at.
+You should perform the cuts in order, you can change the order of the cuts as you wish.
+The cost of one cut is the length of the stick to be cut, the total cost is the sum of costs of all cuts. When you cut a stick, it will be split into two smaller sticks (i.e. the sum of their lengths is the length of the stick before the cut). Please refer to the first example for a better explanation.
+Return the minimum total cost of the cuts.
+
+Input: n = 7, cuts = [1,3,4,5]  
+Output: 16  
+
+Input: n = 9, cuts = [5,6,1,4,2]  
+Output: 22
+
+Solution : Now we need to understand here the cuts can be in any order. But if we take an example of lets say [3,1,5,2], here we decide to make the first cut at 4, then the subprpblem gets divided into [3,1] and [2] which are not independent subproblems as u see once a cut is made at 5, and we solve the left side problem, the position we choose for the left side cut is actually dependent on position we choose at the right side. Whether u should choose 2 first and then 3 and then 1 or first 3 then 2 and then 1 or etc. So u can see they cant be solved independently. So we need to sort the array before to have independent sub-problems. 
+Now after we have that, we should just choose each position one by one and calculate the cost if we choose one particualt position to cut and do recursion for the left and right portion. So all we need to do is keep track of the minimum cost and thats it. 
+Just to make calculation of the length of stick easier, we insert 0 at the beginning and length of stick at the end. So at any position the the length og the stick before cut becomes cuts[j+1] - cuts[i-1].
+Our base case is when i overshoots j and in that case i and j dont denote a valid partition and so we just return 0 as we wont have any cost to cut it.
+
+```cpp
+class Solution {
+public:
+    int minCost(int n, vector<int>& cuts) {
+        cuts.push_back(n);
+        cuts.insert(cuts.begin(), 0);
+        sort(cuts.begin(), cuts.end());
+        vector<vector<int>> dp(cuts.size()+2, vector<int>(cuts.size()+2, -1));
+        return dfs(n, cuts, 1, cuts.size()-2, dp);
+    }
+
+    int dfs(int n, vector<int>& cuts, int i, int j, vector<vector<int>> &dp) {
+        if(i>j)
+            return 0;
+        if(dp[i][j] != -1)
+            return dp[i][j];
+        int cost = 0, res = INT_MAX;
+        for(int k=i; k<=j; k++){
+            cost = cuts[j+1] - cuts[i-1] + dfs(n, cuts, i, k-1, dp) + dfs(n, cuts, k+1, j, dp);
+            res = min(res, cost);
+        }
+        return dp[i][j] = res;
+    }
+};
+```
