@@ -693,3 +693,53 @@ public:
     }
 };
 ```
+
+**DP Partition**
+
+**1. Burst Balloons**
+You are given n balloons, indexed from 0 to n - 1. Each balloon is painted with a number on it represented by an array nums. You are asked to burst all the balloons.
+If you burst the ith balloon, you will get nums[i - 1] * nums[i] * nums[i + 1] coins. If i - 1 or i + 1 goes out of bounds of the array, then treat it as if there is a balloon with a 1 painted on it.
+Return the maximum coins you can collect by bursting the balloons wisely.
+
+Input: nums = [3,1,5,8]  
+Output: 167  
+Explanation:  
+nums = [3,1,5,8] --> [3,5,8] --> [3,8] --> [8] --> []  
+coins =  3*1*5    +   3*5*8   +  1*3*8  + 1*8*1 = 167
+
+Input: nums = [1,5]  
+Output: 10
+
+Solution : The first approach one would think of is try picking one balloon and burst it and then try bursting to left and right of it. But notice that if you pick a balloon lets say 5 from [3,1,5,8] the problem divides as 
+        [3,1] <- [3,1,5,8] -> [8]  
+But do notice that the subproblems we get are not independent of each other i.e. to calculate coins we get from bursting is dependent on [3,1] as we would need to see which balloon is left from [3,1] to serve as left balloon of [8] and vice-versa.
+So we can't have independent sub-problem like this. So we instead of choosing which balloon to burst, we pick which balloon would be burst last.
+So in that way, we separate out the left and right subproblems & they can be solved independently. The coins achieved by bursting any balloon from left wont depend on which balloon to burst last on right.
+
+So we can simply add 1 on both sides of the given array and then keep on picking one balloon ,from start to end, to burst last, and calculate the coins we get from it and then store the maximum. 
+
+```cpp
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) {
+        nums.push_back(1);
+        nums.insert(nums.begin(), 1);
+        vector<vector<int>> dp(nums.size(), vector<int>(nums.size(), -1));
+        return dfs(nums, 1, nums.size()-2, dp);
+    }
+
+    int dfs(vector<int>& nums, int i, int j, vector<vector<int>> &dp){
+        if(i > j)
+            return 0;
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        int max_coins = 0, res = 0;
+        for(int k=i; k<=j; k++){
+            res = dfs(nums, i, k-1, dp) + nums[i-1]*nums[k]*nums[j+1] + dfs(nums, k+1, j, dp);
+            max_coins = max(max_coins, res);
+        }
+        return dp[i][j] = max_coins;
+    }
+};
+```
