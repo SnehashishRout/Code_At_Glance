@@ -1,3 +1,12 @@
+In any DP problem Remember these steps to follow :
+Its a DP problem if in the problem its asked something in lines of All possible Ways, Minimum/Maximum of something.
+
+Once identified do the following :
+1. Try to represent the problem in form of Indexes
+2. Do all possiboe stuffs thats asked in tbe problem
+3. Sum of all stuffs if its asked count all possible ways
+   or get Minimum/Max of All stuffs if asked Minimum/Max of all 
+
 **1. Dynamic Programming 1D**
 
 **A.** Given an integer array nums, return true if you can partition the array into two subsets such that 
