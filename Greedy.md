@@ -9,15 +9,15 @@ Any right parenthesis ')' must have a corresponding left parenthesis '('.
 Left parenthesis '(' must go before the corresponding right parenthesis ')'.
 '*' could be treated as a single right parenthesis ')' or a single left parenthesis '(' or an empty string "".
 
-Input: s = "()"
-Output: true
+Input: s = "()"  
+Output: true  
 Example 2:
 
-Input: s = "(*)"
-Output: true
+Input: s = "(*)"  
+Output: true  
 Example 3:
 
-Input: s = "(*))"
+Input: s = "(*))"  
 Output: true
 
 Solution : The problem is just a variant of the string containing ( and ) and need to find the valid one. All we do is maintain a count of ( and increment it by if we encounter '(' and decrement if ')'. We return false immediately if we encounter a ')' when count is 0 or another way to say it is if anytime count becomes negative which denotes there is ')' for which there was no previous '('.
