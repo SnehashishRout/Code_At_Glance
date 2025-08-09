@@ -89,3 +89,119 @@ public:
         return lmin == 0;
     }
 ```
+**2. Jump Game I**
+You are given an integer array nums. You are initially positioned at the array's first index, and each element in the array represents your maximum jump length at that position.  
+Return true if you can reach the last index, or false otherwise.
+
+Input: nums = [2,3,1,1,4]  
+Output: true  
+Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+
+Input: nums = [3,2,1,0,4]  
+Output: false  
+Explanation: You will always arrive at index 3 no matter what. Its maximum jump length is 0, which makes it impossible to reach the last index.  
+
+Soluntion : This can be appraoched using DP as we can go on exploring all possible scenarios. The DP solution :
+
+```cpp
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        vector<int> dp(nums.size(), -1);
+        return dfs(nums, 0, dp);
+    }
+
+    bool dfs(vector<int>& nums, int i, vector<int> &dp) {
+        if(i == nums.size() - 1)
+            return true;
+        if(i >= nums.size())
+            return false;
+        
+        if(dp[i] != -1)
+            return dp[i];
+
+        bool res = false;
+        for(int j=1; j<=nums[i]; j++){
+            if(j + i <= nums.size()-1)
+                res = res || dfs(nums, j + i, dp);
+        }
+
+        return dp[i] = res;
+    }
+};
+```
+But we can go on with a greedy appraoch where we start from the end and see if we can reach it from any previous index and if we are then our goal becomes that index and see if we can reach the goal using any previous index and so on. So our goal keep shifiting and if our goal becomes the starting index that means we can reach the last index from the start.
+
+```cpp
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int goal = nums.size() - 1;
+        for(int i = nums.size() - 2; i>=0 ; i--){
+            if( i + nums[i] >= goal)
+                goal = i;
+        }
+        return goal == 0;
+    }
+};
+```
+**3. Jump Game II**
+You are given a 0-indexed array of integers nums of length n. You are initially positioned at index 0.  
+Each element nums[i] represents the maximum length of a forward jump from index i. In other words, if you are at index i, you can jump to any index (i + j) where:
+0 <= j <= nums[i] and  
+i + j < n
+Return the minimum number of jumps to reach index n - 1. The test cases are generated such that you can reach index n - 1.  
+Input: nums = [2,3,1,1,4]  
+Output: 2  
+Explanation: The minimum number of jumps to reach the last index is 2. Jump 1 step from index 0 to 1, then 3 steps to the last index.  
+
+Input: nums = [2,3,0,1,4]  
+Output: 2
+
+Approach : This problem can be approcahed in DP way where we keep on exploring all possibilites and keep track of minimum in the way.
+
+```cpp
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        vector<int> dp(nums.size(), -1);
+        return dfs(nums, 0, dp);
+    }
+
+    int dfs(vector<int>& nums, int i, vector<int> &dp) {
+        if(i == nums.size() - 1)
+            return 0;
+        if(dp[i] != -1)
+            return dp[i];
+
+        int res = INT_MAX - 1;
+        for(int j = 1; j<=nums[i]; j++){
+            if(i + j < nums.size())
+                res = min(res, dfs(nums, i + j, dp) + 1);
+        }
+        return dp[i] = res;
+    }
+};
+```
+
+But this is O(N^2) Time Complexity and usinf Greedy Algorithm we can reduce it to O(N). Here we can see that when we start from Origin we can see that when we take maximum jump we can reach all the positions within that max jump position and thus we can keep a jump count of all those that come within that range. So we maintain a range where we have a common jump count and then traverse each positon and go on calculating the maximum we can reach from any of the positions within that range and that becomes the farthest end of the next range. And this way we can continue until farthest reachable limit of any range becomes equal to last index. 
+
+```cpp
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        int l=0, r=0;
+        int jump = 0;
+        while(r < nums.size() - 1) {
+            int farthest = 0;
+            for(int i=l; i<=r; i++){
+                farthest = max(farthest, i + nums[i]);
+            }
+            l = r + 1;
+            r = farthest;
+            jump ++;
+        }
+        return jump;
+    }
+};
+```
