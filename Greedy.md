@@ -1,6 +1,6 @@
 **Greedy Algo**
 
-**1.** Given a string s containing only three types of characters: '(', ')' and '*', return true if s is valid.
+**1. Valid Parenthesis** Given a string s containing only three types of characters: '(', ')' and '*', return true if s is valid.
 
 The following rules define a valid string:
 
@@ -278,4 +278,51 @@ int main() {
 
    return 0;
 } 
+```
+
+**5. Minimum Number of Platform**  
+Problem Statement: We are given two arrays that represent the arrival and departure times of trains that stop at the platform. We need to find the minimum number of platforms needed at the railway station so that no train has to wait.  
+
+Examples 1:  
+Input: N=6,   
+arr[] = {9:00, 9:45, 9:55, 11:00, 15:00, 18:00}   
+dep[] = {9:20, 12:00, 11:30, 11:50, 19:00, 20:00}  
+Output:3  
+Explanation: There are at-most three trains at a time. The train at 11:00 arrived but the trains which had arrived at 9:45 and 9:55 have still not departed. So, we need at least three platforms here.  
+
+Approach : [Striver's Explaination](https://www.youtube.com/watch?v=AsGzwR_FWok&list=PLgUwDviBIf0rF1w2Koyh78zafB0cz7tea&index=10)
+
+```cpp
+int countPlatforms(int n,int arr[],int dep[])
+ {
+    sort(arr,arr+n);
+    sort(dep,dep+n);
+ 
+    int ans=1;
+    int count=1;
+    int i=1,j=0;
+    while(i<n && j<n)
+    {
+        if(arr[i]<=dep[j]) //one more platform needed
+        {
+            count++;
+            i++;
+        }
+        else //one platform can be reduced
+        {
+            count--;
+            j++;
+        }
+        ans=max(ans,count); //updating the value with the current maximum
+    }
+    return ans;
+ }
+ 
+ int main()
+ {
+    int arr[]={900,945,955,1100,1500,1800};
+    int dep[]={920,1200,1130,1150,1900,2000};
+    int n=sizeof(dep)/sizeof(dep[0]);
+    cout<<"Minimum number of Platforms required "<<countPlatforms(n,arr,dep)<<endl;
+ }
 ```
