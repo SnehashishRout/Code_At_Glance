@@ -326,3 +326,54 @@ int countPlatforms(int n,int arr[],int dep[])
     cout<<"Minimum number of Platforms required "<<countPlatforms(n,arr,dep)<<endl;
  }
 ```
+
+**6. Candy**  
+There are n children standing in a line. Each child is assigned a rating value given in the integer array ratings.  
+You are giving candies to these children subjected to the following requirements:
+
+ * Each child must have at least one candy.
+ * Children with a higher rating get more candies than their neighbors.  
+ 
+Return the minimum number of candies you need to have to distribute the candies to the children.  
+
+Input: ratings = [1,0,2]  
+Output: 5  
+Explanation: You can allocate to the first, second and third child with 2, 1, 2 candies respectively.
+
+Input: ratings = [1,2,2]  
+Output: 4  
+Explanation: You can allocate to the first, second and third child with 1, 2, 1 candies respectively.
+The third child gets 1 candy because it satisfies the above two conditions.
+
+Approach : 
+So the idea is to have to check the neighbour and if current rating is more than the neighbour we increment 1 from the previous neighbour rating and if it is less or equal we make it 1 because we want minimum number of Candies. So since we need to check both left and right neigbours we maintain two arrays left and right to track minimum number of candies for each child if we consider left neighbour and right neigbour respectively.
+Once we have that we can just take maximum of the two left and right arrays at each position and then thats it. That will be the minimum number of candies required for each child. After that we just need to sum up all the candies and we are done.
+
+```cpp
+class Solution {
+public:
+    int candy(vector<int>& ratings) {
+        vector<int> left(ratings.size(), 1);
+        vector<int> right(ratings.size(), 1);
+
+        for(int i=1; i<ratings.size(); i++) {
+            if(ratings[i-1] < ratings[i])
+                left[i] = left[i-1] + 1;
+            else
+                left[i] = 1;
+        }
+
+        for(int i=ratings.size() - 2; i>=0; i--) {
+            if(ratings[i+1] < ratings[i])
+                right[i] = right[i+1] + 1;
+            else
+                right[i] = 1;
+        }
+        
+        int sum = 0;
+        for(int i=0; i<ratings.size(); i++)
+            sum += max(left[i], right[i]);
+        return sum;
+    }
+};
+```
