@@ -377,3 +377,50 @@ public:
     }
 };
 ```
+**7. Non-Overlapping Invetervals**  
+Given an array of intervals intervals where intervals[i] = [starti, endi], return the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping.  
+Note that intervals which only touch at a point are non-overlapping. For example, [1, 2] and [2, 3] are non-overlapping.
+
+Example 1:   
+Input: intervals = [[1,2],[2,3],[3,4],[1,3]]  
+Output: 1  
+Explanation: [1,3] can be removed and the rest of the intervals are non-overlapping.  
+
+Example 2:  
+Input: intervals = [[1,2],[1,2],[1,2]]  
+Output: 2  
+Explanation: You need to remove two [1,2] to make the rest of the intervals non-overlapping.  
+
+Example 3:  
+Input: intervals = [[1,2],[2,3]]  
+Output: 0  
+Explanation: You don't need to remove any of the intervals since they're already non-overlapping.
+
+Approach :
+So to understand the appraoch it is recommended to checkout : [N-meetings in one room](https://takeuforward.org/data-structure/n-meetings-in-one-room/). The simple approach is to try to sort the meetings in order of end time and then try to accomodate as many meetings as possible. We want to include meetings that end early i.e have earlier end-time so that I can greedily accomodate more and more meetings if I have more time left.
+But that is N-Meetings, and in this problem we have to just find how many of those slots we need to remove that is basically seeing how many slot you can accomodate and then deduct from total slots to get the slots we need to reject.
+
+```cpp
+bool compar(const vector<int>& v1, const vector<int>& v2) {
+    if(v1[1] != v2[1])
+        return v1[1] < v2[1];
+    else
+        return v1[0] < v2[0];
+}
+
+class Solution {
+public:
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end(), compar);
+        int i=1, cnt=1, limit = intervals[0][1];
+        while(i<intervals.size()) {
+            if(intervals[i][0] >= limit){
+                cnt++;
+                limit = intervals[i][1];
+            }
+            i++;
+        }
+        return intervals.size() - cnt;
+    }
+};
+```
