@@ -20,7 +20,7 @@ Output: 0
 Explanation: You don't need to remove any of the intervals since they're already non-overlapping.
 
 Approach :
-So to understand the appraoch it is recommended to checkout : [N-meetings in one room](https://takeuforward.org/data-structure/n-meetings-in-one-room/). The simple approach is to try to sort the meetings in order of end time and then try to accomodate as many meetings as possible. We want to include meetings that end early i.e have earlier end-time so that I can greedily accomodate more and more meetings if I have more time left.
+So to understand the appraoch it is recommended to checkout : [N-meetings in one room](https://takeuforward.org/data-structure/n-meetings-in-one-room/). The simple approach is to try to sort the meetings in order of end time and then try to accomodate as many meetings as possible. The reason sorting by start time won't work here is because you can have an interval whose start time is the least but its end time is the maximum of all. So in this case even though it starts early but it ends very late due to which we are missing on other intervals which could have been accomodated within that interval. We want to include meetings that end early i.e have earlier end-time so that I can greedily accomodate more and more meetings if I have more time left.
 But that is N-Meetings, and in this problem we have to just find how many of those slots we need to remove that is basically seeing how many slot you can accomodate and then deduct from total slots to get the slots we need to reject.
 
 ```cpp
