@@ -377,4 +377,57 @@ public:
     }
 };
 ```
+**7. Divide Array into sets of K consecutive**  
+Given an array of integers nums and a positive integer k, check whether it is possible to divide this array into sets of k consecutive numbers.
+
+Return true if it is possible. Otherwise, return false.
+
+Example 1:
+Input: nums = [1,2,3,3,4,4,5,6], k = 4
+Output: true
+Explanation: Array can be divided into [1,2,3,4] and [3,4,5,6].
+Example 2:
+
+Input: nums = [3,2,1,2,3,4,3,4,5,9,10,11], k = 3
+Output: true
+Explanation: Array can be divided into [1,2,3] , [2,3,4] , [3,4,5] and [9,10,11].
+Example 3:
+
+Input: nums = [1,2,3,4], k = 3
+Output: false
+Explanation: Each array should be divided in subarrays of size 3.
+
+Appraoch : Approach is simple. We just maintain a min-heap or map (in c++) which is going to give us the count of smallest element remaining. So we store each element along with their frequency and then fetch the smallest and see if we can form a grp of k consecutives with elements remaining in the map. If in any case we fail, that means we can return false and is nto possible to form. So every iteration our smallest number from the map is going to be the starting element of the set and see if the next consecutive numbers are available. If they are we keep on decrementing the freq and remove if freq = 0 at any time for any element.
+
+```cpp
+class Solution {
+public:
+    bool isPossibleDivide(vector<int>& nums, int k) {
+        map<int,int> hm;
+        for(int i=0; i<nums.size(); i++) {
+            hm[nums[i]]++;
+        }
+
+        int cnt = 0;
+        
+        while(!hm.empty()) {
+            int num = hm.begin()->first;
+            cnt = k;
+            while(cnt > 0) {
+                if(hm.find(num) == hm.end())
+                    return false;
+                hm[num]--;
+                if(hm[num] == 0)
+                    hm.erase(num);
+                num++;
+                cnt--;
+            }
+        }
+
+        return true;
+    }
+};
+```
+
+**8. Divide Array into sets of K consecutive**  
 
