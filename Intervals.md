@@ -144,3 +144,48 @@ public:
     }
 };
 ```
+**2. Meeting Rooms II**  
+Given an array of meeting time interval objects consisting of start and end times [[start_1,end_1],[start_2,end_2],...] (start_i < end_i), find the minimum number of days required to schedule all meetings without any conflicts.
+
+Note: (0,8),(8,10) is not considered a conflict at 8.  
+
+Example 1:
+Input: intervals = [(0,40),(5,10),(15,20)]
+Output: 2
+Explanation:
+day1: (0,40)
+day2: (5,10),(15,20)
+
+Example 2:
+Input: intervals = [(4,9)]
+Output: 1
+
+Approach : The Approach can be thought of in like the Minimum number of platforms required for Train. Here the departure times are are the interval endtimes and arrival times are the interval start times. We can just have two sorted arrays containing start times and end times separately and then we can just apply the same logic as we do for Minimum number of platforms.
+
+```cpp
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval>& intervals) {
+        vector<int> starts;
+        vector<int> ends;
+        for(auto x : intervals) {
+            starts.push_back(x.start);
+            ends.push_back(x.end);
+        }
+        sort(starts.begin(), starts.end());
+        sort(ends.begin(), ends.end());
+        int i=0, cnt=0, res = 0, j=0;;
+        while(i<starts.size()) {
+            if(starts[i] < ends[j]){
+                cnt++;
+                i++;
+                res = max(res, cnt);
+            } else {
+                cnt--;
+                j++;
+            }
+        }
+        return res;
+    }
+};
+```
