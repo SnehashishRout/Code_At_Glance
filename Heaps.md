@@ -24,7 +24,47 @@ medianFinder.addNum(3);    // arr[1, 2, 3]
 medianFinder.findMedian(); // return 2.0
 
 **2. K-Closet Points to Origin**   
+Given an array of points where points[i] = [xi, yi] represents a point on the X-Y plane and an integer k, return the k closest points to the origin (0, 0).
+The distance between two points on the X-Y plane is the Euclidean distance (i.e., √(x1 - x2)2 + (y1 - y2)2).
+You may return the answer in any order. The answer is guaranteed to be unique (except for the order that it is in).  
 
+Input: points = [[1,3],[-2,2]], k = 1  
+Output: [[-2,2]]  
+Explanation:  
+The distance between (1, 3) and the origin is sqrt(10).  
+The distance between (-2, 2) and the origin is sqrt(8). Since sqrt(8) < sqrt(10), (-2, 2) is closer to the origin.
+We only want the closest k = 1 points from the origin, so the answer is just [[-2,2]].    
+
+Input: points = [[3,3],[5,-1],[-2,4]], k = 2  
+Output: [[3,3],[-2,4]]  
+Explanation: The answer [[-2,4],[3,3]] would also be accepted.
+
+Approach : So here we just need to use a Min-Heap but the rule based on which the elements are sorted need to be customeized. So this problem is a good example to understand how rules can be customized (in c++) to suit our purpose. But the algo remains simple and that is to either have MinHeap formed of all the points and then pop the first k elements or you can have a Max-Heap that always maintians the size K. While inserting a new elkement if size exceeds K then we just push the max element and then pop the Max element. This way the the end the elements we have in Heap are the K smallest elements.   
+
+```cpp
+class Compare {
+    public:
+        bool operator()(vector<int> v1, vector<int> v2) {
+            return sqrt(v1[0]*v1[0] + v1[1]*v1[1]) > sqrt(v2[1]*v2[1] + v2[0]*v2[0]);
+        }
+};
+
+class Solution {
+public:
+    vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
+        priority_queue<vector<int>, vector<vector<int>>, Compare> pq;
+        vector<vector<int>> res;
+        for(auto x : points)
+            pq.push(x);
+
+        for(int i=0; i < k; i++) {
+            res.push_back(pq.top());
+            pq.pop();
+        }
+        return res;
+    }
+};
+```
 
 **3. Task Scheduling**  
 You are given an array of CPU tasks, each labeled with a letter from A to Z, and a number n. Each CPU interval can be idle or allow the completion of one task. Tasks can be completed in any order, but there's a constraint: there has to be a gap of at least n intervals between two tasks with the same label.
