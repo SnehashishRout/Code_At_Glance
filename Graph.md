@@ -1,3 +1,66 @@
+**1. Clone Graph**  
+Given a reference of a node in a connected undirected graph.
+Return a deep copy (clone) of the graph.
+Each node in the graph contains a value (int) and a list (List[Node]) of its neighbors.
+
+class Node {
+    public int val;
+    public List<Node> neighbors;
+}
+ 
+
+Test case format:
+For simplicity, each node's value is the same as the node's index (1-indexed). For example, the first node with val == 1, the second node with val == 2, and so on. The graph is represented in the test case using an adjacency list.
+An adjacency list is a collection of unordered lists used to represent a finite graph. Each list describes the set of neighbors of a node in the graph.
+The given node will always be the first node with val = 1. You must return the copy of the given node as a reference to the cloned graph.  
+
+Input: adjList = [[2,4],[1,3],[2,4],[1,3]]  
+Output: [[2,4],[1,3],[2,4],[1,3]]  
+Explanation: There are 4 nodes in the graph.  
+1st node (val = 1)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).  
+2nd node (val = 2)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).  
+3rd node (val = 3)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).  
+4th node (val = 4)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).
+
+Input: adjList = [[]]  
+Output: [[]]  
+Explanation: Note that the input contains one empty list. The graph consists of only one node with val = 1 and it does not have any neighbors.
+
+Approach : So the appraoch is simple. We start from the given node and do DFS for all its neighbours. Every time we do we create a new Node of the neigbour and do DFS on it before returning it as the node. Once we have created a new Node, we mark it visited so that node is already created and we just need to add it to the neigbours list if that is one of the neighbour while doing DFS on any node.  
+The Visited Map will store the created node with node value as the key. 
+
+```cpp
+class Solution {
+public:
+    Node* dfs(Node* node, unordered_map<int, Node*> &vis) {
+        if(!node)
+            return node;
+        Node* newNode = new Node(node->val);
+        vis[node->val] = newNode;
+        for(Node* nbr : node->neighbors) {
+                if(vis.find(nbr->val) == vis.end()) {
+                    Node* nbrNode = dfs(nbr, vis);
+                    newNode->neighbors.push_back(nbrNode);
+                }
+                else
+                    newNode->neighbors.push_back(vis[nbr->val]);
+        }
+        return newNode;
+    }
+
+    Node* cloneGraph(Node* node) {
+        unordered_map<int, Node*> vis;
+        Node* nd = dfs(node, vis);
+        for(auto it=vis.begin(); it!=vis.end(); it++) {
+            cout<<it->first<<" ";
+        }
+        return nd;
+    }
+};
+```
+
+
+
 **3. Pacific Atlantic Water Flow**  
 There is an m x n rectangular island that borders both the Pacific Ocean and Atlantic Ocean. The Pacific Ocean touches the island's left and top edges, and the Atlantic Ocean touches the island's right and bottom edges. The island is partitioned into a grid of square cells. You are given an m x n integer matrix heights where heights[r][c] represents the height above sea level of the cell at coordinate (r, c).  
 The island receives a lot of rain, and the rain water can flow to neighboring cells directly north, south, east, and west if the neighboring cell's height is less than or equal to the current cell's height. Water can flow from any cell adjacent to an ocean into the ocean.
