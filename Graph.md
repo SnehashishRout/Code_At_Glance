@@ -102,7 +102,41 @@ Output: [
 ]
 
 ```
-Approach: 
+Approach: So in this problem when we ae asked to find nearest distance to the Treasure, we should do BFS from each cell and when we encounter a gate that should be the nearest gate to that land cell. We do this for all the land cells. So the overall TC : O((m*n)^2)   
+But we can do better. So we can use something called Multi-source BFS. Here instead of starting from each land cell we start from each Treasure and do BFS. We make sure every cell is visited just once. So the nearest land cell will be visited first by its nearest Treasure BFS than any other Treasure's BFS. So in this way we can have all the land cells traversed only once and have the distance populated to their nearest Treasure. In this algo we use a queue and we push all the Treause coordinates into the queue and mark the coordinates as visted. We then start our BFS and we keep on popping each coordinate and then push its neighbours and mark the popped one as visited. 
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> direc = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+    
+    void islandsAndTreasure(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        queue<pair<int, int>> q;
+        for(int i=0; i<grid.size(); i++) {
+            for(int j=0; j<grid[0].size(); j++) {
+                if(grid[i][j] == 0)
+                    q.push({i, j}); 
+            }
+        }
+
+        while(!q.empty()) {
+            int x = q.front().first;
+            int y = q.front().second;
+            q.pop();
+            for(vector<int> dir : direc) {
+                int r = x + dir[0], c = y + dir[1];
+                if(r >= 0 && r < n && c >= 0 && c < m && grid[r][c] == INT_MAX) {
+                    grid[r][c] = grid[x][y] + 1;
+                    q.push({r, c});
+                }
+            }
+        }
+    }
+};
+
+``` 
 
 **3. Pacific Atlantic Water Flow**  
 There is an m x n rectangular island that borders both the Pacific Ocean and Atlantic Ocean. The Pacific Ocean touches the island's left and top edges, and the Atlantic Ocean touches the island's right and bottom edges. The island is partitioned into a grid of square cells. You are given an m x n integer matrix heights where heights[r][c] represents the height above sea level of the cell at coordinate (r, c).  
