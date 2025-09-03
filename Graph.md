@@ -392,3 +392,61 @@ public:
     }
 };
 ```
+
+**5. Surrounded Regions**
+You are given an m x n matrix board containing letters 'X' and 'O', capture regions that are surrounded:
+
+Connect: A cell is connected to adjacent cells horizontally or vertically.
+Region: To form a region connect every 'O' cell.
+Surround: The region is surrounded with 'X' cells if you can connect the region with 'X' cells and none of the region cells are on the edge of the board.
+To capture a surrounded region, replace all 'O's with 'X's in-place within the original board. You do not need to return anything.  
+
+Examples : [Leetcode 130](https://leetcode.com/problems/surrounded-regions/description/)  
+
+Approach : This one should be quite easily comprehensible, as the problem can be restated as finding out the connected componenets in which atleast one node is an edge node and then mark the rest of the nodes as "X". So all we do is try DFS from all the edge nodes first and then mark each of the connected nodes of those edge nodes in visited Matrix.  
+Once we have done that we can just see which all nodes are "O" and not visited and those are marked as "X".  
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> direc = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    void dfs(vector<vector<char>>& board, vector<vector<bool>>& vis, int i,
+             int j) {
+        vis[i][j] = true;
+        for (vector<int> dir : direc) {
+            int r = i + dir[0], c = j + dir[1];
+            if (r < 0 || c < 0 || r >= board.size() || c >= board[0].size()) {
+                
+            } else if (!vis[r][c] && board[r][c] == 'O') {
+                dfs(board, vis, r, c);
+            }
+        }
+    }
+
+    void solve(vector<vector<char>>& board) {
+        vector<vector<bool>> vis(board.size(),
+                                 vector<bool>(board[0].size(), false));
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j < board[0].size(); j++) {
+                if (i == 0 || j == 0 || i == board.size() - 1 ||
+                    j == board[0].size() - 1) {
+                    if (board[i][j] == 'O' && !vis[i][j]) {
+                        if (i == 0 || j == 0 || i == board.size() - 1 ||
+                            j == board[0].size() - 1) {
+                            dfs(board, vis, i, j);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j < board[0].size(); j++) {
+                if (board[i][j] == 'O' && !vis[i][j]) {
+                    board[i][j] = 'X';
+                }
+            }
+        }
+    }
+};
+```
