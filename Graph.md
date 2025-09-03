@@ -1,4 +1,65 @@
-**1. Clone Graph**  
+**1. Number of Islands**
+Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.
+
+An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.  
+
+```cpp
+Example 1:
+
+Input: grid = [
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]
+Output: 1
+Example 2:
+
+Input: grid = [
+  ["1","1","0","0","0"],
+  ["1","1","0","0","0"],
+  ["0","0","1","0","0"],
+  ["0","0","0","1","1"]
+]
+Output: 3
+```
+
+Approach : This is one of the standard problems and this just needs the concept of Connected Components in Graph. We do DFS or BFS to find the number of Connected components in the graph.
+
+```cpp
+class Solution {
+public:
+    int x_dir[2] = {-1, 1};
+    int y_dir[2] = {-1, 1};
+    void dfs(int i, int j, vector<vector<bool>> &vis, vector<vector<char>>& grid) {
+        vis[i][j] = true;
+        for(int x : x_dir) {
+            if(i + x < grid.size() && i + x >= 0 && !vis[i + x][j] && grid[i + x][j] == '1')
+                dfs(i + x, j, vis, grid);
+        }
+
+        for(int y : y_dir) {
+            if(j + y < grid[0].size() && j + y >= 0 && !vis[i][j + y] && grid[i][j + y] == '1')
+                dfs(i, j + y, vis, grid);
+        }
+    }
+    int numIslands(vector<vector<char>>& grid) {
+        int cnt = 0;
+        vector<vector<bool>> vis(grid.size(), vector<bool>(grid[0].size(), false));
+        for(int i=0; i<grid.size(); i++) {
+            for(int j=0; j<grid[0].size(); j++) {
+                if(grid[i][j] == '1' && !vis[i][j]){
+                    dfs(i, j, vis, grid);
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
+    }
+};
+```
+
+**2. Clone Graph**  
 Given a reference of a node in a connected undirected graph.
 Return a deep copy (clone) of the graph.
 Each node in the graph contains a value (int) and a list (List[Node]) of its neighbors.
