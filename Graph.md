@@ -450,3 +450,148 @@ public:
     }
 };
 ```
+
+**6. Course Schedule**  
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai.  
+For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+Return true if you can finish all courses. Otherwise, return false.  
+
+```cpp
+Example 1:
+
+Input: numCourses = 2, prerequisites = [[1,0]]
+Output: true
+Explanation: There are a total of 2 courses to take. 
+To take course 1 you should have finished course 0. So it is possible.
+
+Example 2:
+
+Input: numCourses = 2, prerequisites = [[1,0],[0,1]]
+Output: false
+Explanation: There are a total of 2 courses to take. 
+To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+```
+
+Approach : So here whatever prequisite array is being given just form an adjacency List from it, with the prior task directing an edge to the dependent task. So the problem just boils down to find whether we have a cycle in Directed Graph. Now we will see two ways to find cycle in directed graph. One is through simple DFS and the other one through BFS (Kahn's ALgo) which maeks code more simpler.  
+
+*With Simple DFS*, we just maintain as recursive Stack and if we encounter a node that is already there in the recursive stack, that means there is a cycle. If there is a possibility of disconnected components then we have to have a visited array as well and traverse each node and check if there are any unvisited node left to make sure all components are covered.  
+
+ ```cpp
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        unordered_map<int, vector<int>> adj;
+        vector<bool> vis(numCourses, false);
+        for(int i=0; i<prerequisites.size(); i++) {
+            adj[prerequisites[i][1]].push_back(prerequisites[i][0]);
+        }
+
+        unordered_map<int, int> recStk;
+        bool isCycle = false;
+        for(int i=0; i<numCourses; i++) {
+            if(!vis[i]) {
+                if(dfs(adj, vis, i, recStk, isCycle))
+                    return false;
+            }
+        }
+        
+        return true;
+    }
+
+    bool dfs(unordered_map<int, vector<int>>& adj, vector<bool> &vis, int node, unordered_map<int, int> &recStk, bool &isCycle) {
+        vis[node] = true;
+        recStk[node]++;
+
+        for(int nbr : adj[node]) {
+            if(recStk.find(nbr) != recStk.end()) {
+                return true;
+            }
+            if(dfs(adj, vis, nbr, recStk, isCycle))
+                return true;
+        }
+
+        recStk[node]--;
+        if(recStk[node] == 0)
+            recStk.erase(node);
+
+        return false;
+    }
+};
+```  
+
+Now there is another way that is to find a valid topological ordering of the graph, either by DFS or BFS. If after finding the Topological ordering, the size of the ordering is equal to the total number of nodes, that means we were able to sort all the nodes and there is no cycle else we wont have been able to find ordering of cyclic components.  
+
+*Topological Sort using BFS* : 
+Now to fidn cycle in Directed Graph, in DFS we used a recStack which used pop out elements as we backtrack but in BFS this isnt possible. So we come up with a technique using Topoloigcal sort using BFS. So the idea is that since we know we can Topo sort graph only if it is DAG Graph. So what we do is, we try to Topo sort the Graph and if we are able to TopoSort it then the graph is Acyclic for sure and if we are not then there must be cycle present. So we use Kahn's Algorithm to do TopoSort using BFS and then at the end we check if we are able to topo Sort all the nodes and even if we are not able to sort (even though its just one node) we can say for sure there is a cycle.  
+
+This is called Kahn's ALgorithm. We use the concept called indegree of all nodes. Indegree means number of incoming edges to a particular node. So we use a queue here and we push all the nodes that have indegree 0 at the beginning, because these are the nodes that are not dependent upon any previous node to compelete. Then we keep on popping and fron the front of the queue and whatever node we get we decrement the indegree of the its neighbouring nodes by 1. And if for any neigbour the indegree becomes 0 we push that neigbour in queue which signifies we explored all the prerequisite node of this and this node can now be explored. We do the process until queue is empty. Every time we pop a node from queue we keep on adding it to a topological sorting order.  
+
+```cpp
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        unordered_map<int, vector<int>> adj;
+        vector<int> indeg(numCourses, 0);
+        for(int i=0; i<prerequisites.size(); i++) {
+            adj[prerequisites[i][1]].push_back(prerequisites[i][0]);
+            indeg[prerequisites[i][0]]++;
+        }
+
+        queue<int> q;
+        for(int i=0; i<numCourses; i++) {
+            if(indeg[i] == 0)
+                q.push(i);
+        }
+
+        vector<int> topo;
+        while(!q.empty()) {
+            int node = q.front();
+            q.pop();
+            topo.push_back(node);
+
+            for(int nbr : adj[node]) {
+                indeg[nbr]--;
+                if(indeg[nbr] == 0)
+                    q.push(nbr);
+            }
+        }
+
+        return topo.size() == numCourses;
+    }
+};
+```
+
+**Topological Sort using DFS** :  Just do normal DFS and keep a stack and when we enocunter a node, first visit all its neigbouring nodes and once they are in stack, we then push the current node into the stack. We do that because when we pop out from stack the nodes one by one, we get the nodes in order of parent to neighbouring nodes.
+
+```cpp
+class Solution {
+private:
+	void dfs(int node, int vis[], stack<int> &st,
+	         vector<int> adj[]) {
+		vis[node] = 1;
+		for (auto it : adj[node]) {
+			if (!vis[it]) dfs(it, vis, st, adj);
+		}
+		st.push(node);
+	}
+public:
+	//Function to return list containing vertices in Topological order.
+	vector<int> topoSort(int V, vector<int> adj[])
+	{
+		int vis[V] = {0};
+		stack<int> st;
+		for (int i = 0; i < V; i++) {
+			if (!vis[i]) {
+				dfs(i, vis, st, adj);
+			}
+		}
+
+		vector<int> ans;
+		while (!st.empty()) {
+			ans.push_back(st.top());
+			st.pop();
+		}
+		return ans;
+	}
+};
+```
