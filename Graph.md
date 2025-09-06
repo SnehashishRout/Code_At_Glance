@@ -597,3 +597,44 @@ public:
 	}
 };
 ```
+
+**Detect Cycle in Un-Directed Graph**  
+
+Approach : So this problem is a good example to understand how to find Cycle in an Undirected Graph. So we we need to understand in undirecetd graph the only issue/ diff from a direcetd graph is if there is an edge b/w n1 and n2 then that means n1 is a neighbour of n2 and n2 is also a neighbour of n1 which means while traversing n2 we will get n1 but that n1 would already been visited so the algo would return a cycle is present which actually is not a cycle in an unidrected graph. So to avoid this scenario we in each DFS call pass in the parent, which is the the immediate previous node to the current node and if we encounter any node that is visited and is also a neighbour of current node, and is not the parent then that means a cycle is found.  
+
+```cpp
+class Solution {
+  private: 
+    bool dfs(int node, int parent, int vis[], vector<int> adj[]) {
+        vis[node] = 1; 
+        // visit adjacent nodes
+        for(auto adjacentNode: adj[node]) {
+            // unvisited adjacent node
+            if(!vis[adjacentNode]) {
+                if(dfs(adjacentNode, node, vis, adj) == true) 
+                    return true; 
+            }
+            // visited node but not a parent node
+            else if(adjacentNode != parent) return true; 
+        }
+        return false; 
+    }
+  public:
+    // Function to detect cycle in an undirected graph.
+    bool isCycle(int n, vector<vector<int>>& edges) {
+       unordered_map<int, vector<int>> adj;
+        vector<bool> vis(n, false);
+        for(int i=0; i<edges.size(); i++) {
+            adj[edges[i][0]].push_back(edges[i][1]);
+            adj[edges[i][1]].push_back(edges[i][0]);
+        }
+       // for graph with connected components 
+       for(int i = 0;i<V;i++) {
+           if(!vis[i]) {
+               if(dfs(i, -1, vis, adj) == true) return true; 
+           }
+       }
+       return false; 
+    }
+};
+```
