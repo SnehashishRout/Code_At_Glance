@@ -563,6 +563,8 @@ public:
 
 **Topological Sort using DFS** :  Just do normal DFS and keep a stack and when we enocunter a node, first visit all its neigbouring nodes and once they are in stack, we then push the current node into the stack. We do that because when we pop out from stack the nodes one by one, we get the nodes in order of parent to neighbouring nodes.
 
+*P.S. : This Topo Sort using DFS cannot be used for finding Cycle in Directed Graph. This method is just mentioned in the passing to do Topological Sorting and the Graph needs to be Acyclic Directed graph for this to work*
+
 ```cpp
 class Solution {
 private:
