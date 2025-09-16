@@ -85,6 +85,37 @@ Similarly a Bottom Up appraoch can also be conducted.
 class Solution {
 public:
     string longestPalindrome(string s) {
+        string res = "";
+        vector<vector<int>> dp(s.length(), vector<int>(s.length(), -1));
+        for(int i=0; i<s.length(); i++) {
+            for(int j=i; j<s.length(); j++) {
+                if(dfs(i, j, s, dp)) {
+                    if(res.length() < j-i+1){
+                        res = s.substr(i, j-i+1);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    bool dfs(int i, int j, string &s, vector<vector<int>> &dp) {
+        if(i>j)
+            return true;
+        if(dp[i][j] != -1)
+            return dp[i][j];
+        if(s[i] == s[j])
+            return dp[i][j] = dfs(i+1, j-1, s, dp);
+        
+        return dp[i][j] = false;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    string longestPalindrome(string s) {
         vector<vector<bool>> dp(s.length(), vector<bool>(s.length(), false));
 
         int res = 0, start = 0, end = 0;
