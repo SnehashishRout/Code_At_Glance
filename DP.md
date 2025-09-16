@@ -171,6 +171,58 @@ Solution : This problem can be analyed in a way that every time a character matc
         }
         return dp[text1.length()][text2.length()];
 
+**E.Longest Palindromic Subsequence**  
+Given a string s, find the longest palindromic subsequence's length in s.  
+A subsequence is a sequence that can be derived from another sequence by deleting some or no elements without changing the order of the remaining elements.  
+
+```cpp
+Example 1:
+
+Input: s = "bbbab"
+Output: 4
+Explanation: One possible longest palindromic subsequence is "bbbb".
+Example 2:
+
+Input: s = "cbbd"
+Output: 2
+Explanation: One possible longest palindromic subsequence is "bb".
+```
+
+Approach : So the best method is to think of it as finding the LCS of this string and its resverse. So that would be the longest palindromic Susbequence.  
+But there is another but not so easy way to think of this problem. So just how you think for Longest Plaindormic substring, same here we maintain two pointers i              and j which reperesent both ends of the string. i is start index and j is the end index. So when recurse we see what is the longest palindormic subsequence you can get from the string that starts at i and ends at j. So to check for plaindromes, we see if s[i] == s[j] and if they are we check for inner subsequences and whatever we the longest from the inner subsequneces we add 2 to it to acccount for the two match s[i] and s[j] thus 2 + dfs(i+1,j-1) and if the two are not equal then we check for dfs(i+1,j) and dfs(i,j-1) and try to get the maxiumum palindromic subsequences we can get from the inner ones just as we do for LCS.  
+
+```cpp
+class Solution {
+public:
+    int longestPalindromeSubseq(string s) {
+        string curr = "";
+        int res = 0;
+        vector<vector<int>> dp(s.length(), vector<int>(s.length(), -1));
+        return dfs(0, s.length()-1, s, dp);
+    }
+
+    int dfs(int i, int j, string &s, vector<vector<int>> &dp) {
+        if(i>j)
+            return 0;
+        if(i==j)
+            return 1;
+        
+        if(dp[i][j] != -1) {
+            return dp[i][j];
+        }
+
+        int res = 0;
+        if(i!=j && s[i] == s[j]) {
+            res = 2 + dfs(i+1, j-1, s, dp);
+        } else {
+            res = max(dfs(i, j-1, s, dp), dfs(i+1, j, s, dp));
+        }
+
+        return dp[i][j] = res;
+    }
+};
+```
+
 **D.Unique Paths**
 There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]). The robot can only move either down or right at any point in time.
 Return the number of possible unique paths that the robot can take to reach the bottom-right corner.
