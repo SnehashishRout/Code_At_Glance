@@ -674,3 +674,82 @@ class Solution {
     }
 };
 ```
+
+**Shortest path in Directed Acyclic Graph**  
+
+Given a Directed Acyclic Graph of V vertices from 0 to n-1 and a 2D Integer array(or vector) edges[ ][ ] of length E, where there is a directed edge from edge[i][0] to edge[i][1] with a distance of edge[i][2] for all i.
+
+Find the shortest path from src(0) vertex to all the vertices and if it is impossible to reach any vertex, then return -1 for that vertex.  
+
+```cpp
+Input: V = 6, E = 7, edges = [[0,1,2], [0,4,1], [4,5,4], [4,2,2], [1,2,3], [2,3,6], [5,3,1]]
+Output: [0, 2, 3, 6, 1, 5]
+Explanation: Shortest path from 0 to 1 is 0->1 with edge weight 2. Shortest path from 0 to 2 is 0->4->2 with edge weight 1+2=3. Shortest path from 0 to 3 is 0->4->5->3 with edge weight 1+4+1=6. Shortest path from 0 to 4 is 0->4 with edge weight 1.Shortest path from 0 to 5 is 0->4->5 with edge weight 1+4=5.
+```
+
+Approach : So to solve this there is a very easy and less complex method. You have to just follow the following steps :
+ + Do a Topological Sorting of the Graph nodes and store them in a List
+ + Now have a distance array to store shortest distance value computed from source. The initial values will be INT_MAX or INF+
+ + Mark the distance of source node as 0 in the list. Traverse one by one serially each node from topo sorted list of nodes and relax the edges of that node i.e check if the current distance of curretn node (from src) + edge weight < current distance of the neigbour node (source) and if it is update the distance value for that neighbour node.
+ + The Final value you have is the shortest distance
+
+The distances value for nodes which still have +INF are the onces that cannot be reached form that source.      
+
+The intuition behind this algorithm is since it is topologically sorted nodes, so before we come to any node for realxing its edges, all the preceding nodes must have been traversed before it and thus whatever the shortest distance that could be there to reach current node from source would have been computed.  
+
+*P.S : This algorithm works for any source and not just 0 and you just have to mark the distance of source node as 0 initially*  
+
+```cpp
+class Solution {
+  public:
+    void topoSort(vector<vector<int>>& adj, int node, stack<int> &stk, vector<bool>& vis) {
+        vis[node] = true;
+        for(auto nbr : adj[node]) {
+            if(!vis[nbr]) {
+                topoSort(adj, nbr, stk, vis);
+            }
+        }
+        stk.push(node);
+    }
+    
+    vector<int> shortestPath(int V, int E, vector<vector<int>>& edges) {
+        // code here
+        vector<vector<int>> adj(V);
+        vector<vector<int>> mat(V, vector<int> (V, INT_MAX));
+        vector<bool> vis(V, false);
+        for(int i=0; i<E; i++) {
+            adj[edges[i][0]].push_back(edges[i][1]);
+            mat[edges[i][0]][edges[i][1]] = edges[i][2];
+        }
+        
+        //TOPO Sort
+        stack<int> stk;
+        topoSort(adj, 0, stk, vis);
+        vector<int> topo;
+        while(!stk.empty()) {
+            topo.push_back(stk.top());
+            stk.pop();
+        }
+
+		//Picking each node and relaxing the edges
+        vector<int> dist(V, INT_MAX);
+        dist[0] = 0;
+        for(int i=0; i<topo.size(); i++) {
+            int node = topo[i];
+            for(auto nbr : adj[node]) {
+                if(dist[node] + mat[node][nbr] < dist[nbr]) {
+                    dist[nbr] = dist[node] + mat[node][nbr];
+                }
+            }
+        }
+        
+        for(int i=0; i<dist.size(); i++) {
+            if(dist[i] == INT_MAX)
+                dist[i] = -1;
+        }
+        
+        return dist;
+    }
+};
+
+```
