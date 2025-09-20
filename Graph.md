@@ -638,3 +638,39 @@ class Solution {
     }
 };
 ```
+
+**Shortest Path in Un-Directed Graph with Unit Weight**   
+
+```cpp
+Input: adj[][] = [[1, 3], [0, 2], [1, 6], [0, 4], [3, 5], [4, 6], [2, 5, 7, 8], [6, 8], [7, 6]],
+src=0
+Output: [0, 1, 2, 1, 2, 3, 3, 4, 4]  
+```
+Approach : Whenever Shortest path for Un-Directed Graph for Unit length is asked we can use BFS to solve this. We know the first distance calculated for any node while doing the BFS traversal will be the shortest path as thgats the speciality of BFS as it does Level Wise traversal. 
+
+
+```cpp
+class Solution {
+  public:
+    // Function to find the shortest path from source to all other nodes
+    vector<int> shortestPath(vector<vector<int>>& adj, int src) {
+        // code here
+        vector<int> dist(adj.size(), -1);
+        queue<pair<int,int>> q;
+        q.push({src,0});
+        dist[src] = 0;
+        while(!q.empty()) {
+            int node = q.front().first;
+            int d = q.front().second;
+            q.pop();
+            for(int nbr : adj[node]) {
+                if(dist[nbr] == -1) {
+                    dist[nbr] = d + 1;
+                    q.push({nbr, d+1});
+                }
+            }
+        }
+        return dist;
+    }
+};
+```
