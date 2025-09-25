@@ -753,3 +753,172 @@ class Solution {
 };
 
 ```
+
+**Shortest Path in Weighted Undirected Graph / Dijkstra Algrorithm**  
+
+Given an undirected, weighted graph with V vertices numbered from 0 to V-1 and E edges, represented by 2d array edges[][], where edges[i]=[u, v, w] represents the edge between the nodes u and v having w edge weight.
+You have to find the shortest distance of all the vertices from the source vertex src, and return an array of integers where the ith element denotes the shortest distance between ith node and source vertex src.
+
+Note: The Graph is connected and doesn't contain any negative weight edge.
+
+GFG Link : [https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1](https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1)  
+
+```cpp
+Input: V = 3, edges[][] = [[0, 1, 1], [1, 2, 3], [0, 2, 6]], src = 2
+Output: [4, 3, 0]
+Shortest Paths:
+For 2 to 0 minimum distance will be 4. By following path 2 -> 1 -> 0
+For 2 to 1 minimum distance will be 3. By following path 2 -> 1
+For 2 to 2 minimum distance will be 0. By following path 2 -> 2
+
+Input: V = 5, edges[][] = [[0, 1, 4], [0, 2, 8], [1, 4, 6], [2, 3, 2], [3, 4, 10]], src = 0
+Output: [0, 4, 8, 10, 10]
+Shortest Paths: 
+For 0 to 1 minimum distance will be 4. By following path 0 -> 1
+For 0 to 2 minimum distance will be 8. By following path 0 -> 2
+For 0 to 3 minimum distance will be 10. By following path 0 -> 2 -> 3 
+For 0 to 4 minimum distance will be 10. By following path 0 -> 1 -> 4
+```
+
+Approach : So we solve the above issue for Wighted Undirectced Graph, using Dijkstra's Algorithm. In Dijkstra's algortihm we follow the following steps simply : 
++ Use a Min-Heap and a distance array which is marked with INF for all nodes. Distance array stores all the distances from the source to that Node. 
++ Make the distance of source node as 0 and push it into Min-Heap. The Min-heap is meant to return the minimum distance. We push {distance, node} into the min-heap.
+	+ So we push {0, srcNode} into min-heap and then iterate until its empty. In each iteration, we fetch the the minium distance node and then relax its edges that is traverse all adjacent nodes and see if that neighbour nodes distance is more than the currnet nodes distance + edge weight then that means, we have a better distance/shorter distance and then update the neighbour node's distance and push that distance and node into Min-Heap. if the condition is not met we just skip it. 
++ We continue doing this till the min-heap is empty and what we have finally is the distance array having shortest distance from source to that location.  
+
+```cpp
+// User Function Template
+class Solution {
+  public:
+    vector<int> dijkstra(int V, vector<vector<int>> &edges, int src) {
+        // Code here
+        vector<pair<int,int>> adj[V];
+        for(auto edge : edges) {
+            adj[edge[0]].push_back({edge[1], edge[2]});
+            adj[edge[1]].push_back({edge[0], edge[2]});
+        }
+        
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+        vector<int> dist(V, INT_MAX);
+        dist[src] = 0;
+        pq.push({0, src});
+        
+        while(!pq.empty()) {
+            int weight = pq.top().first;
+            int node = pq.top().second;
+            pq.pop();
+            
+            for(auto edge : adj[node]) {
+                int nbr = edge.first;
+                int edgeWt = edge.second;
+                if(weight + edgeWt < dist[nbr]) {
+                    dist[nbr] = weight + edgeWt;
+                    pq.push({dist[nbr], nbr});
+                }
+            }
+        }
+        
+        return dist;
+    }
+};
+```
+
+Now there can be an extension to the problem and that is what if instead of asking the shortest Distance value, they ask you to print the shortest path. So for that we need to have a separate Parent array to store the parent of the node from which the shortest distance got updated.
+
++ We start by initializing an adjacency list which will store all the adjacent nodes for a particular node along with the weights associated with them.
++ Then, as a part of the initial configuration, we define a dist array to store the updated shortest distances for each node, a priority queue for storing the distance-node pairs, and a source node.
++ In addition to this, we also declare a ‘parent’ array which would store the parent node for each node and will update itself to a different parent if a shorter path from a node is found at some point in time.
++ At the start, all nodes’ parents have been set to the nodes themselves to indicate that the traversal has not yet been started.
++ For every node at the top of the queue, we pop the element out and look out for its adjacent nodes. If the current reachable distance is better than the previous distance (dis + edW < dist[adjNode]), indicated by the distance array, we update the distance and push it into the queue.
++ A node with a lower distance would be at the top of the priority queue as opposed to a node with a higher distance because we are using a min-heap.
++ In addition to the previous step, we will also update the parent array to the node from where the current node came while traversing.
++ By following step 5 repeatedly until our queue becomes empty, we would get the minimum distance from the source node to all other nodes and also our parent array would be updated according to the shortest path.
++ Now, we run a loop starting from the destination node storing the node’s parent and then moving to the parent again (backtrack) till the parent[node] becomes equal to the node itself.
++ At last, we reverse the array in which the path is being stored as the path is in reverse order. Finally, we return the ‘path’ array.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution
+{
+public:
+    vector<int> shortestPath(int n, int m, vector<vector<int>> &edges)
+    {
+        // Create an adjacency list of pairs of the form node1 -> {node2, edge weight}
+        // where the edge weight is the weight of the edge from node1 to node2.
+        vector<pair<int, int>> adj[n + 1];
+        for (auto it : edges)
+        {
+            adj[it[0]].push_back({it[1], it[2]});
+            adj[it[1]].push_back({it[0], it[2]});
+        }
+        // Create a priority queue for storing the nodes along with distances 
+        // in the form of a pair { dist, node }.
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int,int>>> pq;
+
+        // Create a dist array for storing the updated distances and a parent array
+        //for storing the nodes from where the current nodes represented by indices of
+        // the parent array came from.
+        vector<int> dist(n + 1, 1e9), parent(n + 1);
+        for (int i = 1; i <= n; i++)
+            parent[i] = i;
+
+        dist[1] = 0;
+
+        // Push the source node to the queue.
+        pq.push({0, 1});
+        while (!pq.empty())
+        {
+            // Topmost element of the priority queue is with minimum distance value.
+            auto it = pq.top();
+            pq.pop();
+            int node = it.second;
+            int dis = it.first;
+
+            // Iterate through the adjacent nodes of the current popped node.
+            for (auto it : adj[node])
+            {
+                int adjNode = it.first;
+                int edW = it.second;
+
+                // Check if the previously stored distance value is 
+                // greater than the current computed value or not, 
+                // if yes then update the distance value.
+                if (dis + edW < dist[adjNode])
+                {
+                    dist[adjNode] = dis + edW;
+                    pq.push({dis + edW, adjNode});
+
+                    // Update the parent of the adjNode to the recent 
+                    // node where it came from.
+                    parent[adjNode] = node;
+                }
+            }
+        }
+
+        // If distance to a node could not be found, return an array containing -1.
+        if (dist[n] == 1e9)
+            return {-1};
+
+        // Store the final path in the ‘path’ array.
+        vector<int> path;
+        int node = n;
+
+        // Iterate backwards from destination to source through the parent array.
+        while (parent[node] != node)
+        {
+            path.push_back(node);
+            node = parent[node];
+        }
+        path.push_back(1);
+
+        // Since the path stored is in a reverse order, we reverse the array
+        // to get the final answer and then return the array.
+        reverse(path.begin(), path.end());
+        return path;
+    }
+};
+```
+
+
