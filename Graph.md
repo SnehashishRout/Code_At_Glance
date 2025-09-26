@@ -786,6 +786,7 @@ Approach : So we solve the above issue for Wighted Undirectced Graph, using Dijk
 	+ So we push {0, srcNode} into min-heap and then iterate until its empty. In each iteration, we fetch the the minium distance node and then relax its edges that is traverse all adjacent nodes and see if that neighbour nodes distance is more than the currnet nodes distance + edge weight then that means, we have a better distance/shorter distance and then update the neighbour node's distance and push that distance and node into Min-Heap. if the condition is not met we just skip it. 
 + We continue doing this till the min-heap is empty and what we have finally is the distance array having shortest distance from source to that location.  
 
+*P.S. : Dijkstra's Algrorithm is always E x LogV Time complexity where E = Total no. of edges and V = Total Vertices*
 ```cpp
 // User Function Template
 class Solution {
