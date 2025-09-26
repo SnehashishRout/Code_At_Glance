@@ -675,7 +675,7 @@ class Solution {
 };
 ```
 
-**Shortest path in Directed Acyclic Graph**  
+**Shortest path in Weighted Directed Acyclic Graph**  
 
 Given a Directed Acyclic Graph of V vertices from 0 to n-1 and a 2D Integer array(or vector) edges[ ][ ] of length E, where there is a directed edge from edge[i][0] to edge[i][1] with a distance of edge[i][2] for all i.
 
