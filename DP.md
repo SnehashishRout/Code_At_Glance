@@ -472,6 +472,8 @@ int lengthOfLIS(vector<int>& nums) {
 }
 ```
 
+Time Complexity : O(n^2) 
+
 **I.Interleaving Strings**
 Given strings s1, s2, and s3, find whether s3 is formed by an interleaving of s1 and s2.
 
