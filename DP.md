@@ -558,10 +558,7 @@ public:
             return 0;
         int res = 0;
         vector<vector<int>> dp(s.length(), vector<int>(t.length(), -1));
-        for(int i=0; i<s.length(); i++) {
-            res = max(res, dfs(s, t, i, 0, dp));
-        }
-        return res;
+        return dfs(s, t, 0, 0, dp);
     }
 
     int dfs(string s, string t, int i, int j, vector<vector<int>> &dp){
@@ -581,7 +578,32 @@ public:
     }
 };
 ```
+
+```cpp
+class Solution {
+public:
+    int numDistinct(string s, string t) {
+        if(s.length() < t.length())
+            return 0;
+        vector<vector<double>> dp(s.length()+1, vector<double>(t.length()+1, -1));
+        for(int j=0; j<t.length()+1; j++)
+            dp[s.length()][j] = 0;
+        for(int i=0; i<s.length()+1; i++)
+            dp[i][t.length()] = 1;
+        for(int i=s.length()-1; i>=0; i--) {
+            for(int j=t.length()-1; j>=0; j--){
+                if(s[i] == t[j])
+                    dp[i][j] = dp[i+1][j+1] + dp[i+1][j];
+                else
+                    dp[i][j] = dp[i+1][j];
+            }
+        }
+        return dp[0][0];
+    }
+};
+```
 Tabular DP Method :
+Tabular form can be easily written using Memoization if you know Striver's way. Write the base conditions, then reverese the flow from that of memoization, i.e in this case i and j will start from end as in memoization we start from (0, 0). And then we just need to copy the logic from memoization.
 In Tabular Method we just reverse our logic and instead of start we look at each index as the ending one. So for a cell dp[i][j] denotes the number of occurrences of t[0:j] in subsequences of s[0:i]. So for each element, if s[i] == t[j] , we can include that character of s in subsequence thus dp[i][j] = dp[i-1][j-1] + dp[i-1][j] where dp[i-1][j-1] denotes the number of subsequences if s[i] is included bcz it all depends on how many subsequences we have of the previous portion of s and t and dp[i-1][j] is the exclusion count, that is how many subsequences we have of t[0:j] in s[0:i-1].
 We also need to understand the base case, that is the first row and first column which will be blank char for both strings. So coulmn would be filled with 1 bcz we can always have one subsquence in s that matches "" (blank) in t. The rest of cells in 1st row will be 0 bcz we cannot have a subsequence in a blank string that matches a character or substring from t. 
 ```cpp
