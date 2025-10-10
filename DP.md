@@ -673,10 +673,10 @@ public:
     }
 
     int dfs(string w1, string w2, int i, int j, vector<vector<int>> &dp) {
-        // When all the characters of w2 matched so need to delete rest of unmatched w1
+        // When all the characters of w1 matched so need to delete rest of unmatched w2
         if(i >= w1.length() && j < w2.length())
             return w2.length() - j;
-        // When all the characters of w1 matched so need to insert at the end rest of unmatched characters if w2
+        // When all the characters of w2 matched so need to insert at the end rest of unmatched characters if w1
         if(i < w1.length() && j >= w2.length())
             return w1.length() - i;
         // When all characters are matched 
