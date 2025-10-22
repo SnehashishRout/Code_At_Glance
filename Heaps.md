@@ -23,6 +23,44 @@ medianFinder.findMedian(); // return 1.5 (i.e., (1 + 2) / 2)
 medianFinder.addNum(3);    // arr[1, 2, 3]  
 medianFinder.findMedian(); // return 2.0
 
+```cpp
+class MedianFinder {
+    priority_queue<int> l_max_heap;
+    priority_queue<int, vector<int>, greater<int>> r_min_heap;
+public:
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+        if(!l_max_heap.empty() && l_max_heap.top() > num){
+            if(l_max_heap.size() > r_min_heap.size()){
+                r_min_heap.push(l_max_heap.top());
+                l_max_heap.pop();
+                l_max_heap.push(num);
+            } else // they are equal size
+                l_max_heap.push(num);
+        } else if(!l_max_heap.empty() && l_max_heap.top() <= num) {
+            if(l_max_heap.size() > r_min_heap.size()) {
+                r_min_heap.push(num);
+            } else {
+                r_min_heap.push(num);
+                l_max_heap.push(r_min_heap.top());
+                r_min_heap.pop();
+            }
+        } else 
+            l_max_heap.push(num);
+    }
+    
+    double findMedian() {
+        if((l_max_heap.size() + r_min_heap.size())%2 == 0) 
+            return (double)(l_max_heap.top() + r_min_heap.top())/2 ;
+        else
+            return l_max_heap.top();
+    }
+};
+```
+
 **2. K-Closet Points to Origin**   
 Given an array of points where points[i] = [xi, yi] represents a point on the X-Y plane and an integer k, return the k closest points to the origin (0, 0).
 The distance between two points on the X-Y plane is the Euclidean distance (i.e., √(x1 - x2)2 + (y1 - y2)2).
