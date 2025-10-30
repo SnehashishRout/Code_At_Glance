@@ -218,7 +218,7 @@ int findPages(vector<int>& arr, int n, int m) {
 }
 ```
 
-**D** You are given a sorted array containing N integers and a number X, you have to find the occurrences of X in the given array.
+**D.** You are given a sorted array containing N integers and a number X, you have to find the occurrences of X in the given array.
 ```cpp
 Example 1:
 Input: N = 7,  X = 3 , array[] = {2, 2 , 3 , 3 , 3 , 3 , 4}
@@ -233,7 +233,7 @@ Explanation: 2 is occurring 5 times in the given array so it is our answer.
 ```
 *Approach* : This can be done using Binary Search in O(Log N). You just need to compute the Last occurrence and the First Occurrence of that element using Binary Search and then the number of diplicates is (Last occurrence - First Occurrence) + 1
 
-**E** Search In Rotated Array : Given an integer array arr of size N, sorted in ascending order (with distinct values) and a target value k. Now the array is rotated at some pivot point unknown to you. Find the index at which k is present and if k is not present return -1.  
+**E .** Search In Rotated Array : Given an integer array arr of size N, sorted in ascending order (with distinct values) and a target value k. Now the array is rotated at some pivot point unknown to you. Find the index at which k is present and if k is not present return -1.  
 
 ```cpp
 Example 1:
