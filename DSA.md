@@ -218,7 +218,7 @@ int findPages(vector<int>& arr, int n, int m) {
 }
 ```
 
-**D.** You are given a sorted array containing N integers and a number X, you have to find the occurrences of X in the given array.
+**D** You are given a sorted array containing N integers and a number X, you have to find the occurrences of X in the given array.
 ```cpp
 Example 1:
 Input: N = 7,  X = 3 , array[] = {2, 2 , 3 , 3 , 3 , 3 , 4}
@@ -232,3 +232,57 @@ Output: 5
 Explanation: 2 is occurring 5 times in the given array so it is our answer.
 ```
 *Approach* : This can be done using Binary Search in O(Log N). You just need to compute the Last occurrence and the First Occurrence of that element using Binary Search and then the number of diplicates is (Last occurrence - First Occurrence) + 1
+
+**E** Search In Rotated Array : Given an integer array arr of size N, sorted in ascending order (with distinct values) and a target value k. Now the array is rotated at some pivot point unknown to you. Find the index at which k is present and if k is not present return -1.  
+
+```cpp
+Example 1:
+
+Input: nums = [4,5,6,7,0,1,2], target = 0
+Output: 4
+Example 2:
+
+Input: nums = [4,5,6,7,0,1,2], target = 3
+Output: -1
+Example 3:
+
+Input: nums = [1], target = 0
+Output: -1
+```
+
+*Approach* : The approach should be very simple if we understand one fact and that is if you are able to find which protion of the array is sorted. So everytime we find a middle element, we just have to figure out which portion of array (left or right) is sorted and the one that is soerted, you can just check if the target element can lie in that portion. If the target can lie in that sorted portion we eliminate the unsorted portion and if not then we eliminate the sorted protion and likewise we can reach our target solution.
+
+```cpp
+int search(vector<int>& arr, int n, int k) {
+    int low = 0, high = n - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+
+        //if mid points the target
+        if (arr[mid] == k) return mid;
+
+        //if left part is sorted:
+        if (arr[low] <= arr[mid]) {
+            if (arr[low] <= k && k <= arr[mid]) {
+                //element exists:
+                high = mid - 1;
+            }
+            else {
+                //element does not exist:
+                low = mid + 1;
+            }
+        }
+        else { //if right part is sorted:
+            if (arr[mid] <= k && k <= arr[high]) {
+                //element exists:
+                low = mid + 1;
+            }
+            else {
+                //element does not exist:
+                high = mid - 1;
+            }
+        }
+    }
+    return -1;
+}
+```
