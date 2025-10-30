@@ -24,7 +24,8 @@ Solution : The observation to be seen here is whichever is the single element, t
        i. If the middle element is not equal to its right neighbor, the single element must be on the left side of the array, so update the right pointer to be the current middle index.
        ii. Otherwise, the single element must be on the right side of the array, so update the left pointer to be the middle index plus 2.
 3. When the left and right pointers converge to a single element, return that element.
-```cpp
+   
+<pre>
 class Solution {
 public:
     int singleNonDuplicate(vector<int>& nums) {
@@ -43,8 +44,7 @@ public:
         return nums[left];
     }
 };
-```cpp  
-
+</pre>
 
 **B.** Given two sorted arrays arr1 and arr2 of size m and n respectively, return the median of the two sorted arrays. The median is defined as the middle value of a sorted list of numbers. In case the length of the list is even, the median is the average of the two middle elements.
    Your solution must run in O(log (n+m)) time
@@ -68,6 +68,7 @@ Solution : The observation to be seen here is whichever is the single element, t
    Increment left pointer to mid+1, if rightmost element of left-portion of arr2 is > right-most of left portion of arr1, so that we can decrease the number of elements        count of arr2 elements in our imaginary should-be left-portion of final sorted array by increasing the number of arr1 elements to be included.
 4. On the other hand if the conditions are correct, then we just have to check if the total number of elements (combining arr1 and arr2) is odd or even. If its odd then        consider MIN of Left-most element of right portion of both the arrays. Else, if it is even numbered, then it is [(max(right-most part of left portions of both arrays) +      min(left-most of right portion of both arrays)] / 2.
 5. Link Solution : [Neetcode Solution](https://www.youtube.com/watch?v=q6IEA26hvXc)
+
 ```cpp
 class Solution {
 public:
@@ -108,7 +109,7 @@ public:
         }
     }
 };
-```cpp    
+```cpp
 
 **C.** Given an array ‘arr of integer numbers, ‘ar[i]’ represents the number of pages in the ‘i-th’ book. There are a ‘m’ number of students, and the task is to allocate all the books to the students.
 Allocate books in such a way that:
