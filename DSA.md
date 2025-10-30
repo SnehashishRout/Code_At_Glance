@@ -179,7 +179,7 @@ Otherwise, the value mid is one of the possible answers. But we want the minimum
 Finally, outside the loop, we will return the value of low as the pointer will be pointing to the answer.
 The steps from 3-4 will be inside a loop and the loop will continue until low crosses high.
 
-<pre>
+```cpp
    int countStudents(vector<int> &arr, int pages) {
     int n = arr.size(); //size of array.
     int students = 1;
@@ -216,4 +216,19 @@ int findPages(vector<int>& arr, int n, int m) {
     }
     return low;
 }
-</pre>
+```
+
+**D.** You are given a sorted array containing N integers and a number X, you have to find the occurrences of X in the given array.
+```cpp
+Example 1:
+Input: N = 7,  X = 3 , array[] = {2, 2 , 3 , 3 , 3 , 3 , 4}
+Output: 4
+Explanation: 3 is occurring 4 times in 
+the given array so it is our answer.
+
+Example 2:
+Input: N = 8,  X = 2 , array[] = {1, 1, 2, 2, 2, 2, 2, 3}
+Output: 5
+Explanation: 2 is occurring 5 times in the given array so it is our answer.
+```
+*Approach* : This can be done using Binary Search in O(Log N). You just need to compute the Last occurrence and the First Occurrence of that element using Binary Search and then the number of diplicates is (Last occurrence - First Occurrence) + 1
