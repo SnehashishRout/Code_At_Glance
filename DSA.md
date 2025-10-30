@@ -57,7 +57,6 @@ Input: arr1 = [2, 4, 6], arr2 = [1, 3]
 Output: 3.0
 Explanation: The array after merging arr1 and arr2 will be [ 1, 2, 3, 4, 6 ]. The median is simply 3.
 Solution : The observation to be seen here is whichever is the single element, that partitions the array in to two parts : left and right. 
-           All the elements in left part are such that the First element is at even index and its corresponding other one is at odd. And vice versa in Right half.
            So every time we can apply binary search with the following appraoch :
 
 1. Assign left and right pointer to the smaller length array of the two (lets say arr1) and apply binbary search on it.
@@ -65,7 +64,7 @@ Solution : The observation to be seen here is whichever is the single element, t
 3. To check if the left portion we have assumed is actually the correct left-portion, we compare the maximum of rightmost elements of left-portion both arrays and it should    be lesser than the minimum of the left-most elements of the right portions of both the arrays. 
    If the above condition is not true, then we have to decrement right-pointer of arr1 to mid-1, if rightmost element of left-portion of arr1 is > right-most of left           portion of arr2, so that we can decrease the number of elements count of arr1 elements in our imaginary should-be left-portion of final sorted array.
    Increment left pointer to mid+1, if rightmost element of left-portion of arr2 is > right-most of left portion of arr1, so that we can decrease the number of elements        count of arr2 elements in our imaginary should-be left-portion of final sorted array by increasing the number of arr1 elements to be included.
-4. On the other hand if the conditions are correct, then we just have to check if the total number of elements (combining arr1 and arr2) is odd or even. If its odd then        consider MIN of Left-most element of right portion of both the arrays. Else, if it is even numbered, then it is (max(right-most part of left portions of both arrays) +      min(left-most of right portion of both arrays).
+4. On the other hand if the conditions are correct, then we just have to check if the total number of elements (combining arr1 and arr2) is odd or even. If its odd then        consider MIN of Left-most element of right portion of both the arrays. Else, if it is even numbered, then it is [(max(right-most part of left portions of both arrays) +      min(left-most of right portion of both arrays)] / 2.
 5. Link Solution : [Neetcode Solution](https://www.youtube.com/watch?v=q6IEA26hvXc)
 <pre>class Solution {
 public:
