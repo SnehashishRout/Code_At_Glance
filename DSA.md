@@ -286,3 +286,50 @@ int search(vector<int>& arr, int n, int k) {
     return -1;
 }
 ```
+
+**F.** Search In Rotated Array II : Given an integer array arr of size N, sorted in ascending order (with **duplicates**) and a target value k. Now the array is rotated at some pivot point unknown to you. Find the index at which k is present and if k is not present return -1.
+
+Approach : The approach will be same as the previous one but there is just one case which we need to handle and i.e. where the low mid and high are the same number which then makes it difficult for us to choose which side is sorted and which one is not. So we explicitly check for this condition where arr[low] == arr[mid] == arr[high] and if that is true, we just shrink our search space from bith sides.
+
+```cpp
+bool searchInARotatedSortedArrayII(vector<int>&arr, int k) {
+    int n = arr.size(); // size of the array.
+    int low = 0, high = n - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+
+        //if mid points the target
+        if (arr[mid] == k) return true;
+
+        //Edge case:
+        if (arr[low] == arr[mid] && arr[mid] == arr[high]) {
+            low = low + 1;
+            high = high - 1;
+            continue;
+        }
+
+        //if left part is sorted:
+        if (arr[low] <= arr[mid]) {
+            if (arr[low] <= k && k <= arr[mid]) {
+                //element exists:
+                high = mid - 1;
+            }
+            else {
+                //element does not exist:
+                low = mid + 1;
+            }
+        }
+        else { //if right part is sorted:
+            if (arr[mid] <= k && k <= arr[high]) {
+                //element exists:
+                low = mid + 1;
+            }
+            else {
+                //element does not exist:
+                high = mid - 1;
+            }
+        }
+    }
+    return false;
+}
+```
