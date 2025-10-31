@@ -333,3 +333,28 @@ bool searchInARotatedSortedArrayII(vector<int>&arr, int k) {
     return false;
 }
 ```
+
+**G.** Find Min in Rotated Array : Given the sorted rotated array nums of unique elements, return the minimum element of this array.
+You must write an algorithm that runs in O(log n) time.
+
+Approach : So here we can approach the problem in a way that I know the minimum element will just be next to the maximum element in the array. So if I can get the maximum element then I can increment the index to get my smallest element. Now to get the largest element, we keep a track of indices. If we get any element greater than the current one, we update the index. While we fetch the mid, we check which one is the sorted portion and then eliminate that because in the sorted portion we are sure it wont get larger element, but we might get larger element in the unsorted one. Incase we dont we will still have the current maximum element stored in one of our variable.
+
+```cpp
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        int res = 0;
+        int l=0, h=nums.size()-1;
+        while(l<=h) {
+            int mid = (l+h)/2;
+            if(nums[mid] > nums[res])
+                res = mid;
+            if(nums[mid] >= nums[l])
+                l = mid+1;
+            else
+                h=mid-1;
+        }
+        return nums[res==nums.size()-1? 0 : res+1];
+    }
+};
+```
