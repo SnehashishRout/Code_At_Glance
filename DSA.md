@@ -376,4 +376,79 @@ Output: 10
 Explanation: [0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1]
 Bolded numbers were flipped from 0 to 1. The longest subarray is underlined.
 ```
+Approach : So this problem can be thought of as finding the subarray that has the maximum number of ones with atmost K 0s. So if we cant find that our job is done. So we use the Sliding Window technique. In this we maintain a window size which has atmost K 0 i.e if at any moment the number of 0 in the window exceeds the maximum K 0s then we should shrink the widnow size and proceed. So everytime we keep a count of number of 1 in the window and store the maximum no. of 1 window size.
 
+```cpp
+class Solution {
+public:
+    int longestOnes(vector<int>& nums, int k) {
+        int left = 0;
+        int zeros = 0;
+        int maxLen = 0;
+
+        for (int right = 0; right < nums.size(); right++) {
+
+            if (nums[right] == 0) {
+                zeros++;
+            }
+
+            while (zeros > k) {
+                if (nums[left] == 0) {
+                    zeros--;
+                }
+                // Move the left pointer forward
+                left++; 
+            }
+            maxLen = max(maxLen, right - left + 1);
+        }
+
+        return maxLen;
+    }
+};
+```
+
+**B. Min Swaps to Group 1s :** 
+Given a binary array consisting of only 0s and 1s, your task is to find the minimum number of swaps required to group all 1s. If there are no 1s in the array, return -1. The goal is to move all 1s into a contiguous subarray with the least number of swaps.
+
+```cpp
+Input: arr[] = [1, 0, 1, 0, 1]
+Output: 1
+Explanation: Only 1 swap is required to group all 1's together. Swapping index 1 and 4 will give arr[] = [1, 1, 1, 0, 0]
+
+Input: arr[] = [1, 0, 1, 0, 1, 1] 
+Output: 1
+
+Input: arr[] = [0, 0, 0]
+Output: -1
+Explanation: No 1s are present in the array, so return -1.
+```
+
+Approach : So here we can just count the total number of 1s in the array and the final subarray/grp of all 1s will be of size = total number of 1. So we take a window of size of total no. of 1s and then keep on slidinf it. The window which has maximum number of 1s in that will be the one where all 1 grp can be achieved through minimum swaps. So we just subvtract the maximum no. of 1s in that window from the window size (i.e. the total 1s in whole array) to get the number of 0.
+
+```cpp
+public:
+    int minSwaps(vector<int>& arr) {
+        int cnt_one = 0, tot_one = 0, max_one = 0;
+        for(int x : arr) {
+            if(x == 1)
+                tot_one++;
+        }
+        
+        if(tot_one == 0)
+            return -1;
+            
+        int l=0, r=0;
+        while(r<arr.size()) {
+            if(arr[r] == 1)
+                cnt_one++;
+            max_one = max(max_one, cnt_one);
+            if(r-l+1 == tot_one) {
+                if(arr[l] == 1)
+                    cnt_one--;
+                l++;
+            }
+             r++;
+        }
+        return tot_one - max_one;
+    }
+```
