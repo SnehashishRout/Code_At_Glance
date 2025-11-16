@@ -359,7 +359,7 @@ public:
     }
 };
 ```
-**H** Find Peak Element 
+**H.** Find Peak Element : <br>
 A peak element is an element that is strictly greater than its neighbors.
 Given a 0-indexed integer array nums, find a peak element, and return its index. If the array contains multiple peaks, return the index to any of the peaks.
 You may imagine that nums[-1] = nums[n] = -∞. In other words, an element is always considered to be strictly greater than a neighbor that is outside the array.
@@ -407,7 +407,7 @@ public:
 
 **B.S. On 2D Matrix**
 
-**I** Search in 2D Matrix : You are given an m x n integer matrix matrix with the following two properties:
+**I.** Search in 2D Matrix : You are given an m x n integer matrix matrix with the following two properties:
 
 Each row is sorted in non-decreasing order.
 The first integer of each row is greater than the last integer of the previous row.
