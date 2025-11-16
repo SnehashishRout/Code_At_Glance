@@ -217,7 +217,8 @@ int findPages(vector<int>& arr, int n, int m) {
     return low;
 }
 ```
-To check if you grasped the question or not you may checkout this Leetcode : [split-array-largest-sum][https://leetcode.com/problems/split-array-largest-sum/description/]
+To check if you grasped the question or not you may checkout this Leetcode : [split-array-largest-sum](https://leetcode.com/problems/split-array-largest-sum/description/)
+
 **D.** You are given a sorted array containing N integers and a number X, you have to find the occurrences of X in the given array.
 ```cpp
 Example 1:
