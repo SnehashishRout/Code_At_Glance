@@ -174,7 +174,7 @@ Calculate the ‘mid’: Now, inside the loop, we will calculate the value of �
 mid = (low+high) // 2 ( ‘//’ refers to integer division)
 Eliminate the halves based on the number of students returned by countStudents():
 We will pass the potential number of pages, represented by the variable 'mid', to the ‘countStudents()' function. This function will return the number of students to whom we can allocate the books.
-If students > m: On satisfying this condition, we can conclude that the number ‘mid’ is smaller than our answer. So, we will eliminate the left half and consider the right half(i.e. low = mid+1).
+If students > m: It means that even after taking in maximum number pages for each student, without corssing the max limit of pages, the least number of students we could reach is greater than m and thus we cant go lesser with the current limit on Pages. Thus, we can conclude that the number ‘mid’ is smaller than our answer. So, we will eliminate the left half and consider the right half(i.e. low = mid+1).
 Otherwise, the value mid is one of the possible answers. But we want the minimum value. So, we will eliminate the right half and consider the left half(i.e. high = mid-1).
 Finally, outside the loop, we will return the value of low as the pointer will be pointing to the answer.
 The steps from 3-4 will be inside a loop and the loop will continue until low crosses high.
@@ -217,7 +217,7 @@ int findPages(vector<int>& arr, int n, int m) {
     return low;
 }
 ```
-
+To check if you grasped the question or not you may checkout this Leetcode : [split-array-largest-sum][https://leetcode.com/problems/split-array-largest-sum/description/]
 **D.** You are given a sorted array containing N integers and a number X, you have to find the occurrences of X in the given array.
 ```cpp
 Example 1:
