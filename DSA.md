@@ -359,6 +359,71 @@ public:
     }
 };
 ```
+**H** Find Peak Element 
+A peak element is an element that is strictly greater than its neighbors.
+Given a 0-indexed integer array nums, find a peak element, and return its index. If the array contains multiple peaks, return the index to any of the peaks.
+You may imagine that nums[-1] = nums[n] = -∞. In other words, an element is always considered to be strictly greater than a neighbor that is outside the array.
+
+You must write an algorithm that runs in O(log n) time.
+
+```cpp
+Example 1:
+
+Input: nums = [1,2,3,1]
+Output: 2
+Explanation: 3 is a peak element and your function should return the index number 2.
+Example 2:
+
+Input: nums = [1,2,1,3,5,6,4]
+Output: 5
+Explanation: Your function can return either index number 1 where the peak element is 2, or index number 5 where the peak element is 6.
+```
+Approach : We conduct binary search and for every mid we compute we check if that element at that mid satisfies the condition of peak i.e if its greater than its neighbours.
+If it is we return our answer else we check if that element is greater than its right neighbour, and if it is that means peak lies in the left and we make high pointer to mid-1 and otherwise if mid element is greater than its left element then that means peak lies in the right so we make l = mid+1 . In this way we will be searching for the peak. One thing to note is we have to handle the two edges, the first and last element separately and we just check if any of them is a peak element. If not then we start our search excluding the two edges.
+
+Code :
+```cpp
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        if(nums.size() == 1) return 0;
+        if(nums[0] > nums[1]) return 0;
+        if(nums[nums.size()-1] > nums[nums.size()-2]) return nums.size()-1;
+
+        int l=1, h=nums.size()-2;
+        while(l<=h) {
+            int mid = (l+h)/2;
+            if(nums[mid-1] < nums[mid] && nums[mid] > nums[mid+1])
+                return mid;
+            else if(nums[mid-1] < nums[mid])
+                l = mid+1;
+            else
+                h = mid-1;
+        }
+        return 0;
+    }
+};
+```
+
+**B.S. On 2D Matrix**
+
+**I** Search in 2D Matrix : You are given an m x n integer matrix matrix with the following two properties:
+
+Each row is sorted in non-decreasing order.
+The first integer of each row is greater than the last integer of the previous row.
+Given an integer target, return true if target is in matrix or false otherwise.
+
+You must write a solution in O(log(m * n)) time complexity.
+
+```cpp
+Input: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+Output: true
+
+Input: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13
+Output: false
+```
+Approach : 
+
 
 **2. Sliding Window**
 
