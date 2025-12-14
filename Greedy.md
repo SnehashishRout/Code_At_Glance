@@ -20,6 +20,7 @@ Example 3:
 Input: s = "(*))"  
 Output: true
 
+[Leetcode Link](https://leetcode.com/problems/valid-parenthesis-string/)
 Solution : The problem is just a variant of the string containing ( and ) and need to find the valid one. All we do is maintain a count of ( and increment it by 1 if we encounter '(' and decrement if ')'. We return false immediately if we encounter a ')' when count is 0 or another way to say it is if anytime count becomes negative which denotes there is ')' for which there was no previous '('.
 But the current condition that * can be '(' or ')' or empty brings out that we need to explore all 3 scenarios when we encounter * so it is becomes a recursive problem which can be optimized by DP Memoization. 
 But this problem specifically can be optimized using Greedy also. So we know count can vary in 3 possible directions for * depending upon what do we choose it to be. So instead of single value we can maintain a range of values which can count can have. So we maintain 2 variables , lmin and lmax that is the min and max values count can have while iterating a particualr index of string. So if [lmin, lmax] = [0, 2] it means till that point in the string count can have any vsalue from 0 to 2.
