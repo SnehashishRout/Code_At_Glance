@@ -518,3 +518,93 @@ public:
         return tot_one - max_one;
     }
 ```
+
+**C. Sliding Window in 2D Matrix :**       
+Question Link : [Leetcode Magic Sqaures in Grid](https://leetcode.com/problems/magic-squares-in-grid/description/?envType=daily-question&envId=2025-12-30)
+
+This question is mentioned as there is one important concept to be noted here i.e how to slide a 2d Matrix and do operation in each window. Questions involving such type of questions are common and thus appraoch should be kept in mind.
+
+```cpp
+class Solution {
+public:
+    bool checkValid(int val, int i, int j, unordered_map<int, vector<int>> &hm) {
+        if(!(val >=1 && val <= 9))
+            return false;
+
+        if(hm.find(val) != hm.end()) {
+            if(hm[val][0] != i || hm[val][1] != j)
+                return false;
+        }
+
+        return true;
+    }
+
+    int numMagicSquaresInside(vector<vector<int>>& grid) {
+
+        if(grid.size() < 3 || grid[0].size() < 3)
+            return 0;
+
+        unordered_map<int, vector<int>> hm;
+        int row = 2, cnt = 0;
+        while(row < grid.size()) {
+            int col = 2;
+            while(col < grid[0].size()) {
+                bool isValid = true;
+                int sum = 0;
+                for(int i=row-2; i<=row; i++) {
+                    int curr_sum = 0;
+                    for(int j=col-2; j<=col; j++) {
+                        if(!checkValid(grid[i][j], i, j, hm)) {
+                            isValid = false;
+                            break;
+                        } else {
+                            hm[grid[i][j]] = {i,j};
+                        }
+                        curr_sum += grid[i][j];
+                    }
+                    if(i==row-2)
+                        sum = curr_sum;
+                    else if(sum != curr_sum){
+                        isValid = false;
+                        break;
+                    }
+                }
+                hm.clear();
+
+                for(int j=col-2; j<=col; j++) {
+                    int curr_sum = 0;
+                    for(int i=row-2; i<=row; i++) {
+                        curr_sum += grid[i][j];
+                    }
+                    if(sum != curr_sum){
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                int diag1 = 0, diag2 = 0;
+                for(int i=row-2, j=col-2; i<=row && j<=col; i++, j++) {
+                    diag1 += grid[i][j];
+                }
+
+                for(int i=row, j=col-2; i>=row-2 && j<=col; i--, j++) {
+                    diag2 += grid[i][j];
+                }
+
+                if(!(diag1 == diag2 && diag1 == sum))
+                    isValid = false;
+                
+                if(isValid) {
+                    cnt++;
+                    // cout<<"("<<row<<","<<col<<")"<<"="<<sum<<","<<diag1<<endl;
+                }
+                
+                col++;
+            }
+            row++;
+        } 
+
+        return cnt;
+    }
+};
+```
