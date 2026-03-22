@@ -923,7 +923,7 @@ public:
 ```
 ***Disjoint Set Union***  
 
-**Number of Operations to Make Network Connected**  
+**7. Number of Operations to Make Network Connected**  
 You are given an array points representing integer coordinates of some points on a 2D-plane, where points[i] = [xi, yi].
 The cost of connecting two points [xi, yi] and [xj, yj] is the manhattan distance between them: |xi - xj| + |yi - yj|, where |val| denotes the absolute value of val.
 Return the minimum cost to make all points connected. All points are connected if there is exactly one simple path between any two points.  
@@ -1003,6 +1003,102 @@ public:
     }
 };
 ```
+
+**8. Most Stones Removed with Same Row or Column**  
+On a 2D plane, we place n stones at some integer coordinate points. Each coordinate point may have at most one stone.
+A stone can be removed if it shares either the same row or the same column as another stone that has not been removed.
+Given an array stones of length n where stones[i] = [xi, yi] represents the location of the ith stone, return the largest possible number of stones that can be removed.  
+```cpp
+Input: stones = [[0,0],[0,1],[1,0],[1,2],[2,1],[2,2]]
+Output: 5
+Explanation: One way to remove 5 stones is as follows:
+1. Remove stone [2,2] because it shares the same row as [2,1].
+2. Remove stone [2,1] because it shares the same column as [0,1].
+3. Remove stone [1,2] because it shares the same row as [1,0].
+4. Remove stone [1,0] because it shares the same column as [0,0].
+5. Remove stone [0,1] because it shares the same row as [0,0].
+Stone [0,0] cannot be removed since it does not share a row/column with another stone still on the plane.
+
+Input: stones = [[0,0],[0,2],[1,1],[2,0],[2,2]]
+Output: 3
+Explanation: One way to make 3 moves is as follows:
+1. Remove stone [2,2] because it shares the same row as [2,0].
+2. Remove stone [2,0] because it shares the same column as [0,0].
+3. Remove stone [0,2] because it shares the same row as [0,0].
+Stones [0,0] and [1,1] cannot be removed since they do not share a row/column with another stone still on the plane.
+
+Input: stones = [[0,0]]
+Output: 0
+Explanation: [0,0] is the only stone on the plane, so you cannot remove it.
+```
+Approach : So we see coordinates sharing same row and column are someway linked and only those which share a row or col can be removed. So we see these coordinates are removed only when there exist a member in a group. The group is formed by all coordinates which share either row or column. So we can think of them as connected components. If we observe cautiously, We can remove all memebers of a group except one. There will always be one coordinate left at the end which cant be removed. So we arrive at conclusion that if we can some way find the size of all the connected components and decrease their sizes by 1 and add, we can get our answer. So we use DSU to make Union and then calc of size of each component easier. 
+Note that we use UnionBySize here bcz we need the size of the components at the end.  
+
+```cpp
+class DSU {
+public :
+    vector<int> size;
+    vector<int> parent;
+    DSU(int n) {
+        for(int i=0; i<n; i++) {
+            size.push_back(1);
+            parent.push_back(i); 
+        }
+    }
+
+    int getPar(int node) {
+        if(parent[node] == node)
+            return node;
+        
+        return parent[node] = getPar(parent[node]);
+    }
+
+    void unionBySize(int u, int v) {
+        int up = getPar(u);
+        int vp = getPar(v);
+
+        if(up == vp)
+            return;
+        if(size[up] < size[vp]) {
+            parent[up] = vp;
+            size[vp] += size[up];
+        } else if(size[up] > size[vp]) {
+            parent[vp] = up;
+            size[up] += size[vp];
+        } else {
+            parent[vp] = up;
+            size[up] += size[vp];
+        }
+    } 
+};
+
+class Solution {
+public:
+    int removeStones(vector<vector<int>>& stones) {
+        DSU ds(stones.size());
+        for(int i=0; i<stones.size(); i++) {
+            for(int j=i+1; j<stones.size(); j++) {
+                if(stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1]) {
+                    ds.unionBySize(i, j);
+                }
+            }
+        }
+
+        unordered_map<int,int> hm;
+        for(int n : ds.parent) {
+            hm[ds.getPar(n)]++;
+        }
+
+        int res = 0;
+        for(auto it : hm) {
+            res += ds.size[it.first] - 1;
+        }
+
+        return res;
+    }
+};
+```
+Time Comlplexity : O(N^2) where N is size of stones array. 
 
 ***MST***
 
