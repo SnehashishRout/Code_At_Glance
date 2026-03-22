@@ -923,7 +923,9 @@ public:
 ```
 ***MST***
 
-**Min Cost to Connect All Points / Prims's Algorithm**  
+**Min Cost to Connect All Points / Prims's Algorithm**    
+
+**By Prim's Algo**
 
 You are given an array points representing integer coordinates of some points on a 2D-plane, where points[i] = [xi, yi].
 The cost of connecting two points [xi, yi] and [xj, yj] is the manhattan distance between them: |xi - xj| + |yi - yj|, where |val| denotes the absolute value of val.
@@ -983,3 +985,86 @@ public:
 };
 ```
 Time Complexity : O(E*logE) -> E is no of Edges || Space Complexity : O(E) + O(V), where E = no. of edges and V = no. of vertices. O(E) occurs due to the size of the priority queue and O(V) due to the visited array.
+
+**By Kruskal's Algo (DisjointSet)**  
+
+Intuition with Kruskal's Algo is quite simple. 
++ Store all the edges in a List and sort them by weight.
++ Now iterate over the list and check the nodes of the edge , if they are in same component or have same Ultimate parent. If they are then that means we can ignore this edge as those two nodes are already connected through some route (directly or indirectly). If they are not part of same component then considert hat edge, include that weight as part of MST Weight calc and perform Union of those two nodes i.e make them connected. 
+
+
+```cpp
+class DSU{
+public :
+    vector<int> parent, rank;
+    DSU(int n) {
+        for(int i=0; i<n; i++) {
+            parent.push_back(i);
+            rank.push_back(0);
+        }
+    }
+
+    int getPar(int node) {
+        if(parent[node] == node)
+            return node;
+        return parent[node] = getPar(parent[node]);
+    }
+
+    void unionByRank(int u, int v) {
+        int up = getPar(u);
+        int vp = getPar(v);
+        if(up == vp)
+            return;
+        if(rank[up] < rank[vp]){
+            parent[up] = vp;
+        } else if(rank[vp] < rank[up]){
+            parent[vp] = up;
+        } else {
+            parent[vp] = up;
+            rank[up]++;
+        }
+    }
+};
+
+class Solution {
+public:
+    int minCostConnectPoints(vector<vector<int>>& points) {
+        vector<vector<int>> adj(points.size());
+        for(int i=0; i<points.size(); i++) {
+            for(int j=i+1; j<points.size(); j++) {
+                adj[i].push_back(j);
+                adj[j].push_back(i);
+            }
+        }
+
+        // {wt, {u, v}} ---> edge
+        vector<pair<int, pair<int,int>>> edges;
+        for(int i=0; i<adj.size(); i++) {
+            for(int j=0; j<adj[i].size(); j++) {
+                int nbr = adj[i][j];
+                int wt = abs(points[i][0] - points[nbr][0]) + abs(points[i][1] - points[nbr][1]);
+                edges.push_back({wt, {i, nbr}});
+            }
+        }
+
+        sort(edges.begin(), edges.end());
+
+        DSU ds(points.size());
+        int res = 0;
+
+        for(auto edge : edges) {
+            int u = edge.second.first;
+            int v = edge.second.second;
+            int wt = edge.first;
+
+            if(ds.getPar(u) == ds.getPar(v))
+                continue;
+    
+            res += wt;
+            ds.unionByRank(u, v);
+        }
+
+        return res;
+    }
+};
+```
