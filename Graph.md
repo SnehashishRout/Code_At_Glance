@@ -1100,6 +1100,9 @@ public:
 ```
 Time Comlplexity : O(N^2) where N is size of stones array. 
 
+**9. Accounts Merge**  
+
+
 ***MST***
 
 **Min Cost to Connect All Points / Prims's Algorithm**    
