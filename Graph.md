@@ -921,6 +921,89 @@ public:
     }
 };
 ```
+***Disjoint Set Union**  
+
+**Number of Operations to Make Network Connected**  
+You are given an array points representing integer coordinates of some points on a 2D-plane, where points[i] = [xi, yi].
+The cost of connecting two points [xi, yi] and [xj, yj] is the manhattan distance between them: |xi - xj| + |yi - yj|, where |val| denotes the absolute value of val.
+Return the minimum cost to make all points connected. All points are connected if there is exactly one simple path between any two points.  
+
+```cpp
+Input: n = 4, connections = [[0,1],[0,2],[1,2]]
+Output: 1
+Explanation: Remove cable between computer 1 and 2 and place between computers 1 and 3.
+
+Input: n = 6, connections = [[0,1],[0,2],[0,3],[1,2],[1,3]]
+Output: 2
+
+Input: n = 6, connections = [[0,1],[0,2],[0,3],[1,2]]
+Output: -1
+Explanation: There are not enough cables.
+```
+*Approach* : So here if we carefully observed the minimum number of connections to connect all the computers is n-1 if n is the number of computers. So first we should check if the given number of connections are atleast n-1. If not then no possible to connect all. If there are enough connections, all we have to do is find the number of components in the current configuretion. If there are total M components, the minimum connections that are required among the M components is M-1 connections. So all we have to do is find the number of components. We can do this easily by using DSU. 
+
+```cpp
+class DSU {
+public :
+    vector<int> rank;
+    vector<int> parent;
+    DSU(int n) {
+        for(int i=0; i<n; i++) {
+            rank.push_back(0);
+            parent.push_back(i); 
+        }
+    }
+
+    int getPar(int node) {
+        if(parent[node] == node)
+            return node;
+        
+        return parent[node] = getPar(parent[node]);
+    }
+
+    void unionByRank(int u, int v) {
+        int up = getPar(u);
+        int vp = getPar(v);
+
+        if(up == vp)
+            return;
+        if(rank[up] < rank[vp]) {
+            parent[up] = vp;
+        } else if(rank[up] > rank[vp]) {
+            parent[vp] = up;
+        } else {
+            parent[vp] = up;
+            rank[up]++;
+        }
+    } 
+};
+
+class Solution {
+public:
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        if(n-1 > connections.size())
+            return -1;
+        int compo = getComponents(n, connections);
+        
+        return compo-1;
+    }
+
+    int getComponents(int n, vector<vector<int>>& connections) {
+        DSU ds(n);
+        for(auto connec : connections) {
+            ds.unionByRank(connec[0], connec[1]);
+        }
+        unordered_map<int,int> hm;
+
+        // Dont use Par array to traverse as it might still have some nodes whose ultimate par is not yet calc
+        for(int i=0; i<n; i++) {
+            hm[ds.getPar(i)]++;
+        }
+        return hm.size();
+    }
+};
+```
+
 ***MST***
 
 **Min Cost to Connect All Points / Prims's Algorithm**    
