@@ -921,5 +921,64 @@ public:
     }
 };
 ```
+***MST***
 
+**Min Cost to Connect All Points / Prims's Algorithm**  
 
+You are given an array points representing integer coordinates of some points on a 2D-plane, where points[i] = [xi, yi].
+The cost of connecting two points [xi, yi] and [xj, yj] is the manhattan distance between them: |xi - xj| + |yi - yj|, where |val| denotes the absolute value of val.
+Return the minimum cost to make all points connected. All points are connected if there is exactly one simple path between any two points.
+
+```cpp
+Input: points = [[0,0],[2,2],[3,10],[5,2],[7,0]]
+Output: 20
+Input: points = [[3,12],[-2,5],[-4,1]]
+Output: 18
+```
+Approach : This problem straight aways is asking what will be the weight of Minimum SPanning tree of the Graph formed by the coordinates. The graph here is not directly given but here each coordinate is connected with the other and the weight of the path is the Manhattan Distance. 		
+So once you understand that all that is left is to form the graph and Use one of the algorithm (Prim's or Kruskals) to form MST or just get the total weight in the MST as in this case as the whole MST is not required. So we perform following steps (Prim's Algroithm) :
++ We first form the graph which has an edge b/w every coordinate.
++ We in our mind mark each coordinate with a node number which is equal to the index at which that coordinate is there in the input array.
++ We push the pair of weight and node into Min-Heap. First we push {0, 0} signifying first 0 node with 0 weight is pushed.
++ Now we run a loop till the heap is non-empty and in each iteration we pull out the entry with minimum weight. We check if the node is not visited and if not We mark the node as visited, use that distance in our final minimum weight calculation and explore its unvisited neighbours and push the pair {Manhattan distance, neighbour} into the heap. If the node was already visited we do nothing and just continue with next iteration.
++ After we are done, we should have the minimum weight of the MST with us.
+
+*P.S : Here we only interested with the total weight of the MST but if we can also form the whole MST using Prim's Algo. There would be an additional step in the above process. So For that just checkout : [TUF Min Weight](https://takeuforward.org/data-structure/prims-algorithm-minimum-spanning-tree-c-and-java-g-45)*
+```cpp
+class Solution {
+public:
+    bool compar(Node n1, Node n2) {
+        return n2.dist < n1.dist;
+    }
+    int minCostConnectPoints(vector<vector<int>>& points) {
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+        vector<vector<int>> adj(points.size());
+        for(int i=0; i<points.size(); i++) {
+            for(int j=i+1; j<points.size(); j++) {
+                adj[i].push_back(j);
+                adj[j].push_back(i);
+            }
+        }
+
+        pq.push({0, 0});
+        vector<bool> vis(points.size(), false);
+        int res = 0;
+        while(!pq.empty()) { 
+            int dist = pq.top().first;
+            int node = pq.top().second;
+            pq.pop();
+
+            if(vis[node])
+                continue;
+            
+            vis[node] = true;
+            res += dist;
+            for(auto nbr : adj[node]) {
+                if(!vis[nbr])
+                    pq.push({abs(points[nbr][0] - points[node][0]) + abs(points[nbr][1] - points[node][1]), nbr});
+            }
+        }
+        return res;
+    }
+};
+```
