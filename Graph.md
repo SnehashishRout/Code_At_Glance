@@ -982,3 +982,4 @@ public:
     }
 };
 ```
+Time Complexity : O(E*logE) -> E is no of Edges || Space Complexity : O(E) + O(V), where E = no. of edges and V = no. of vertices. O(E) occurs due to the size of the priority queue and O(V) due to the visited array.
