@@ -1102,6 +1102,157 @@ Time Comlplexity : O(N^2) where N is size of stones array.
 
 **9. Accounts Merge**  
 
+**10. Making a Large Island**  
+
+You are given an n x n binary matrix grid. You are allowed to change at most one 0 to be 1.
+Return the size of the largest island in grid after applying this operation.
+An island is a 4-directionally connected group of 1s.  
+
+```cpp
+Input: grid = [[1,0],[0,1]]
+Output: 3
+Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.
+
+Input: grid = [[1,1],[1,0]]
+Output: 4
+Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.
+
+Input: grid = [[1,1],[1,1]]
+Output: 4
+Explanation: Can't change any 0 to 1, only one island with area = 4.
+```
+
+*Approach :* So the very first appraoch that comes into our mind is to traverse each zero and then convert it to 1 and then find the size of the largest island that exists in the matrix. But it would be really inefficient as this might result in O((m*n)^2) Time complexity. If we obeserve carefully instead of converting each zero to 1 we can just look in all 4 directions of current 0 and see if the neighbouring cell is 1 and what is the size of the component that it is part of. So adding up the sizes of components of all such neighbouring 1 are part of and then adding 1 (to account for the current 0 that would be converted to 1) should give us the total size of the component that would be formed by converting the current 0 to 1. But we need to be careful to not double count some components as two neighbouring 1s can be part of same component. 
+  
+So our problem boild down to for each zero, finding how many distinct components are its neighbouring 1s (if any) are part of and then their sizes. So the mast efficient way to know a node is part of same component and their size is to use DSU. So we use Disjoint Set Union but by Size as we would require sizes of each component. 
+
++ We first traverse the whole matrix and perform union of two nodes which are 1 and neighbours so that we have all the components formed by the end of our traversal.
++ Since its a matrix, we would need some conversion to extract the node number out of the x and y coordinates. One of the ways is : if m is the number of columns, x and y are coordinates, then node number = x*m + y. So we use this to calc node number coordinate corresponds to.
++ Now we traverse each 0 and then lookk in 4 directions and then store their ultimate parents in a map so that we know how many distinct parents/components are the neighbouring 1s part of. We then add up sizes of all the distinct components and then add 1 at the end. We keep track of the maximum size found so far.
++ Then after this we again traverse the array to just compare the individual component sizes with the maximum result so far. This is there to make sure, we are accounting for the case where there is no such 0 whose conversion contributes to joining  of components and in turn giving us a larger componenent. 
+
+```cpp
+class DSU {
+public:
+    vector<int> rank;
+    vector<int> parent;
+    vector<int> size;
+    DSU(int n) {
+        for (int i = 0; i < n; i++) {
+            rank.push_back(0);
+            parent.push_back(i);
+            size.push_back(1);
+        }
+    }
+
+    int getPar(int node) {
+        if (parent[node] == node)
+            return node;
+
+        return parent[node] = getPar(parent[node]);
+    }
+
+    void unionByRank(int u, int v) {
+        int up = getPar(u);
+        int vp = getPar(v);
+
+        if (up == vp)
+            return;
+        if (rank[up] < rank[vp]) {
+            parent[up] = vp;
+        } else if (rank[up] > rank[vp]) {
+            parent[vp] = up;
+        } else {
+            parent[vp] = up;
+            rank[up]++;
+        }
+    }
+
+    void unionBySize(int u, int v) {
+        int up = getPar(u);
+        int vp = getPar(v);
+
+        if (up == vp)
+            return;
+        if (size[up] < size[vp]) {
+            parent[up] = vp;
+            size[vp] += size[up];
+        } else {
+            parent[vp] = up;
+            size[up] += size[vp];
+        }
+    }
+};
+
+class Solution {
+public:
+    bool isValid(int row, int col, vector<vector<int>>& grid) {
+        return (row >= 0 && row < grid.size() && col >= 0 &&
+                col < grid[0].size() && grid[row][col] == 1);
+    }
+    int largestIsland(vector<vector<int>>& grid) {
+        vector<vector<int>> dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        int n = grid.size(), m = grid[0].size();
+        DSU ds(n * m);
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid[0].size(); j++) {
+                for (auto dir : dirs) {
+                    int x = dir[0] + i;
+                    int y = dir[1] + j;
+                    if (grid[i][j] == 1 && isValid(x, y, grid)) {
+                        int currNode = i * m + j;
+                        int nbr = x * m + y;
+                        ds.unionBySize(currNode, nbr);
+                    }
+                }
+            }
+        }
+
+        unordered_map<int,int> hm;
+        int res = 0;
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid[0].size(); j++) {
+                if (grid[i][j] == 0) {
+                    for (auto dir : dirs) {
+                        int x = dir[0] + i;
+                        int y = dir[1] + j;
+                        if (isValid(x, y, grid)) {
+                            int nbr = x * m + y;
+                            hm[ds.getPar(nbr)]++;
+                        }
+                    }
+                    int compo_sizes = 0;
+                    for(auto it : hm) {
+                        compo_sizes += ds.size[it.first];
+                    }
+                    res = max(res, compo_sizes+1);
+                    hm.clear();
+                }
+            }
+        }
+
+    // This is step is there to tackle as case where there are no zeros or there is no such 0 which being converted to 1 contributes to a
+    // larger island. So in this case we choose the largest among the existing islands.
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid[0].size(); j++) {
+                if (grid[i][j] == 1) {
+                    int node = i*m + j;
+                    hm[ds.getPar(node)]++;
+                }
+            }
+        }
+
+        for(auto it : hm) {
+            res = max(res, ds.size[it.first]);
+        }
+
+        return res;
+    }
+};
+```
+
+*Time Complexity : O(M * N)*
+
 
 ***MST***
 
