@@ -1100,7 +1100,99 @@ public:
 ```
 Time Comlplexity : O(N^2) where N is size of stones array. 
 
-**9. Accounts Merge**  
+**9. Accounts Merge**    
+Given a list of accounts where each element accounts[i] is a list of strings, where the first element accounts[i][0] is a name, and the rest of the elements are emails representing emails of the account.
+
+Now, we would like to merge these accounts. Two accounts definitely belong to the same person if there is some common email to both accounts. Note that even if two accounts have the same name, they may belong to different people as people could have the same name. A person can have any number of accounts initially, but all of their accounts definitely have the same name.
+
+After merging the accounts, return the accounts in the following format: the first element of each account is the name, and the rest of the elements are emails in sorted order. The accounts themselves can be returned in any order.
+
+```cpp
+Input: accounts = [["John","johnsmith@mail.com","john_newyork@mail.com"],["John","johnsmith@mail.com","john00@mail.com"],["Mary","mary@mail.com"],["John","johnnybravo@mail.com"]]
+Output: [["John","john00@mail.com","john_newyork@mail.com","johnsmith@mail.com"],["Mary","mary@mail.com"],["John","johnnybravo@mail.com"]]
+Explanation:
+The first and second John's are the same person as they have the common email "johnsmith@mail.com".
+The third John and Mary are different people as none of their email addresses are used by other accounts.
+We could return these lists in any order, for example the answer [['Mary', 'mary@mail.com'], ['John', 'johnnybravo@mail.com'], 
+['John', 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com']] would still be accepted.
+```
+
+```cpp
+class DSU {
+public :
+    vector<int> size;
+    vector<int> parent;
+    DSU(int n) {
+        for(int i=0; i<n; i++) {
+            size.push_back(1);
+            parent.push_back(i); 
+        }
+    }
+
+    int findPar(int node) {
+        if(parent[node] == node)
+            return node;
+        
+        return parent[node] = findPar(parent[node]);
+    }
+
+    void unionBySize(int u, int v) {
+        int up = findPar(u);
+        int vp = findPar(v);
+
+        if(up == vp)
+            return;
+        if(size[up] < size[vp]) {
+            parent[up] = vp;
+            size[vp] += size[up];
+        } else if(size[up] > size[vp]) {
+            parent[vp] = up;
+            size[up] += size[vp];
+        } else {
+            parent[vp] = up;
+            size[up] += size[vp];
+        }
+    } 
+};
+
+class Solution {
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        unordered_map<string, int> hm;
+
+        DSU ds(accounts.size());
+        int node = 0;
+        for(int i=0; i<accounts.size(); i++) {
+            for(int j=1; j<accounts[i].size(); j++) {
+                if(hm.find(accounts[i][j]) != hm.end()) {
+                    ds.unionBySize(ds.findPar(hm[accounts[i][j]]), i);
+                    continue;
+                } else {
+                    hm[accounts[i][j]] = i;
+                }
+            }
+        }
+
+        unordered_map<int, vector<string>> nodeToEmail;
+        for(auto it : hm) {
+            int node = ds.findPar(it.second);
+            nodeToEmail[node].push_back(it.first);
+        }
+
+        vector<vector<string>> res;
+        for(auto it : nodeToEmail) {
+            vector<string> temp;
+            temp.push_back(accounts[it.first][0]);
+            sort(nodeToEmail[it.first].begin(), nodeToEmail[it.first].end());
+            for(auto email : nodeToEmail[it.first])
+                temp.push_back(email);
+            res.push_back(temp);
+        }
+
+        return res;
+    }
+};
+```
 
 **10. Making a Large Island**  
 
