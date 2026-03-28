@@ -1485,7 +1485,8 @@ int main() {
 ```
 
 
-***MST***
+***MST***  
+*A Minimum Spanning Tree (MST) is a subset of edges from a connected, undirected, and weighted graph that connects all the vertices together without any cycles and with the minimum possible total edge weight.*  
 
 **12. Min Cost to Connect All Points / Prims's Algorithm**    
 
