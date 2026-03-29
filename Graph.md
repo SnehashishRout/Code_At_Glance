@@ -1692,3 +1692,5 @@ public:
     }
 };
 ```
+TC : O(N^2 LogN)
+In all the Dijkstra type of solutions shoudl remeber the TC is O(E * LogV) and here in a matrix V = N^2 and E~N^2 so N^2 * Log(N^2) = N^2 * LogN
