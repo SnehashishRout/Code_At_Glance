@@ -1634,4 +1634,61 @@ public:
 };
 ```
 Time Complexity : *O(E LogE) or O(E LogV)*  
-Space Compelxity : *O(E + V)* 
+Space Compelxity : *O(E + V)*   
+
+**13. Swim in Rising Water**  
+
+You are given an n x n integer matrix grid where each value grid[i][j] represents the elevation at that point (i, j).
+It starts raining, and water gradually rises over time. At time t, the water level is t, meaning any cell with elevation less than equal to t is submerged or reachable.
+You can swim from a square to another 4-directionally adjacent square if and only if the elevation of both squares individually are at most t. You can swim infinite distances in zero time. Of course, you must stay within the boundaries of the grid during your swim.
+
+Return the minimum time until you can reach the bottom right square (n - 1, n - 1) if you start at the top left square (0, 0).  
+
+[Leetcode 778](https://leetcode.com/problems/swim-in-rising-water/description/)  
+
+Approach : Basically You're minimising the maximum elevation along your path from (0,0) to (n-1,n-1) — the classic minimax path problem. The min-heap always surfaces the path whose worst cell so far is smallest. So we use Dijkstra's Algorithm (or Prim's) with some modification. We pop from heap and explore all the nodes in its neighbours. Only diff is what we do with weight. So isntead of adding up the edge weight and then pushing (as in Dijkstra), we calculate the max of current node elevation and its neighbour cell and push it in the heap. We do this because here to traverse from current node to neighbouring node, have to wait till the max of the two elevations and that is what the edge weight is. So instead of just pusing the edge weight as in Prim's Algo, our calculation of edge weight is a bit different.
+
+## How it differs from standard Dijkstra
+
+|                   | Standard Dijkstra          | LC 778 (minimax)               |
+|-------------------|----------------------------|--------------------------------|
+| Heap stores       | `(dist from source, node)` | `(max elevation so far, r, c)` |
+| Relaxation        | `dist[src] + edge_weight`  | `max(cost, grid[nr][nc])`      |
+| Terminates        | All nodes settled          | Destination first popped       |
+| vis array needed  | Optional                   | Required                       |  
+
+
+```cpp
+vector<vector<int>> dirs = {{0,1}, {0,-1}, {-1,0}, {1, 0}};
+class Solution {
+public:
+    int swimInWater(vector<vector<int>>& grid) {
+        priority_queue<pair<int, pair<int,int>>, vector<pair<int, pair<int,int>>>, greater<pair<int, pair<int,int>>>> pq;
+        vector<vector<bool>> vis(grid.size(), vector<bool>(grid[0].size(), false));
+        
+        pq.push({grid[0][0], {0, 0}});
+
+        while(!pq.empty()) {
+            int wt = pq.top().first;
+            int x = pq.top().second.first;
+            int y = pq.top().second.second;
+            pq.pop();
+            if(x==grid.size()-1 && y==grid[0].size()-1)
+                return wt;
+
+            if(vis[x][y])
+                continue;
+            vis[x][y] = true;
+
+            for(auto dir : dirs) {
+                int nx = x + dir[0];
+                int ny = y + dir[1];
+                if(nx >=0 && ny>=0 && nx<grid.size() && ny <grid[0].size() && !vis[nx][ny]) {
+                    pq.push({max(wt, grid[nx][ny]), {nx, ny}});
+                }
+            }
+        }
+        return -1;
+    }
+};
+```
